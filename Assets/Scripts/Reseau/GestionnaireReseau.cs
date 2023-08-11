@@ -11,6 +11,8 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
     //Contient référence au component NetworkRunner
     NetworkRunner _runner;
 
+    GestionnaireInputs gestionnaireInputs;
+
     // Contient la référence au script JoueurReseau du Prefab
     public JoueurReseau joueurPrefab;
 
@@ -56,6 +58,7 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
         if(_runner.IsServer)
         {
             Debug.Log("Un joueur s'est connecté comme serveur. Spawn d'un joueur");
+            Debug.Log(player.PlayerId);
             _runner.Spawn(joueurPrefab, Utilitaires.GetPositionSpawnAleatoire(), Quaternion.identity, player);
         }
         else
@@ -73,7 +76,17 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        
+        if(gestionnaireInputs == null && JoueurReseau.Local !=null)
+        {
+            
+            gestionnaireInputs = JoueurReseau.Local.GetComponent<GestionnaireInputs>();
+        }
+
+        if(gestionnaireInputs !=null)
+        {
+            print("ok ok");
+            input.Set(gestionnaireInputs.GetInputReseau());
+        }
     }
 
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
