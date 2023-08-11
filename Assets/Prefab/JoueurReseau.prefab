@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 1915251000420157156}
   - component: {fileID: 4237258052330640105}
   - component: {fileID: 2219616965450672773}
+  - component: {fileID: 2396267454642171701}
   m_Layer: 0
   m_Name: CameraFPS
-  m_TagString: MainCamera
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -27,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 3734831795843982092}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.096472256, y: 0.9442955, z: -0.29}
+  m_LocalPosition: {x: 0, y: 0.482, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -92,6 +93,18 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3734831795843982092}
   m_Enabled: 1
+--- !u!114 &2396267454642171701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3734831795843982092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f671cb6e632124c7681efed29db99621, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7595839750843803963
 GameObject:
   m_ObjectHideFlags: 0
@@ -324,10 +337,11 @@ MonoBehaviour:
   TargetInterpolationDelay: 0.03
   gravity: -20
   jumpImpulse: 8
-  acceleration: 10
-  braking: 10
-  maxSpeed: 2
-  rotationSpeed: 15
+  acceleration: 50
+  braking: 30
+  maxSpeed: 6
+  rotationSpeed: 80
+  vitesseVueHautBas: 60
   _IsGrounded: 0
   _Velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &4161528167590098456

@@ -84,7 +84,6 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
 
         if(gestionnaireInputs !=null)
         {
-            print("ok ok");
             input.Set(gestionnaireInputs.GetInputReseau());
         }
     }

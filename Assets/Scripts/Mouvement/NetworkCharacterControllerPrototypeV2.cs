@@ -14,6 +14,8 @@ public class NetworkCharacterControllerPrototypeV2 : NetworkTransform {
   public float braking       = 10.0f;
   public float maxSpeed      = 2.0f;
   public float rotationSpeed = 15.0f;
+    // ajout
+    public float vitesseVueHautBas = 50f;
 
   [Networked]
   [HideInInspector]
@@ -104,7 +106,7 @@ public class NetworkCharacterControllerPrototypeV2 : NetworkTransform {
       horizontalVel = Vector3.Lerp(horizontalVel, default, braking * deltaTime);
     } else {
       horizontalVel      = Vector3.ClampMagnitude(horizontalVel + direction * acceleration * deltaTime, maxSpeed);
-      transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), rotationSpeed * Runner.DeltaTime);
+     // transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), rotationSpeed * Runner.DeltaTime);
     }
 
     moveVelocity.x = horizontalVel.x;
@@ -115,4 +117,9 @@ public class NetworkCharacterControllerPrototypeV2 : NetworkTransform {
     Velocity   = (transform.position - previousPos) * Runner.Simulation.Config.TickRate;
     IsGrounded = Controller.isGrounded;
   }
+    public void Rotate(float rotationY)
+    {
+        transform.Rotate(0, rotationY * Runner.DeltaTime * rotationSpeed, 0);
+       
+    }
 }
