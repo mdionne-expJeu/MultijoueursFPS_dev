@@ -57,7 +57,8 @@ public class GestionnaireInputs : MonoBehaviour
         gestionnaireMouvementPersonnage.AjustementVue(vueInputVecteur);
 
         //Saut
-        ilSaute = Input.GetButtonDown("Jump");
+        if (Input.GetButtonDown("Jump"))
+            ilSaute = true;
     }
 
     /*
@@ -76,6 +77,7 @@ public class GestionnaireInputs : MonoBehaviour
         donneesInputReseau.mouvementInput = mouvementInputVecteur;
         donneesInputReseau.rotationInput = vueInputVecteur.x;
         donneesInputReseau.saute = ilSaute;
+        ilSaute = false;
        //3.
         return donneesInputReseau;
     }

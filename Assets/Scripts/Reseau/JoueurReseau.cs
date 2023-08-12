@@ -17,15 +17,29 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
 {
     public static JoueurReseau Local { get; set; } //.2
 
+    public Transform modeleJoueur;
+
+
     public override void Spawned() //3.
     {
         if(Object.HasInputAuthority)
         {
             Local = this;
+
+            Utilitaires.SetRenderLayerInChildren(modeleJoueur, LayerMask.NameToLayer("JoueurLocal"));
+
+            Camera.main.gameObject.SetActive(false);
+
             Debug.Log("Un joueur local a été créé");
         }
         else
         {
+            Camera camLocale = GetComponentInChildren<Camera>();
+            camLocale.enabled = false;
+
+            AudioListener audioListener = GetComponentInChildren<AudioListener>();
+            audioListener.enabled = false;
+
             Debug.Log("Un joueur réseau a été créé");
         }
     }
