@@ -20,8 +20,6 @@ using System;
 
 public class GestionnaireMouvementPersonnage : NetworkBehaviour
 {
-    Vector2 vueInput;
-    float cameraRotationX = 0f;
     Camera camLocale;
     NetworkCharacterControllerPrototypeV2 networkCharacterControllerPrototypeV2;
 
@@ -45,11 +43,7 @@ public class GestionnaireMouvementPersonnage : NetworkBehaviour
      */
     private void Update()
     {
-        //1.Action local seulement non synchronisée sur le réseau (vue haut/bas)
-        cameraRotationX -= vueInput.y * Time.deltaTime * networkCharacterControllerPrototypeV2.vitesseVueHautBas;
-
-        cameraRotationX = Mathf.Clamp(cameraRotationX, -90, 90);
-        camLocale.transform.localRotation = Quaternion.Euler(cameraRotationX, 0, 0);
+        
     }
 
     /*
@@ -72,7 +66,11 @@ public class GestionnaireMouvementPersonnage : NetworkBehaviour
         GetInput(out DonneesInputReseau donneesInputReseau);
 
         //2.
-        networkCharacterControllerPrototypeV2.Rotate(donneesInputReseau.rotationInput);
+        transform.forward = donneesInputReseau.vecteurDevant;
+        Quaternion rotation = transform.rotation;
+        rotation.eulerAngles = new Vector3(0, rotation.eulerAngles.y, rotation.eulerAngles.z);
+        transform.rotation = rotation;
+
 
         //3.
         Vector3 directionMouvement = transform.forward * donneesInputReseau.mouvementInput.y + transform.right * donneesInputReseau.mouvementInput.x;
@@ -87,8 +85,5 @@ public class GestionnaireMouvementPersonnage : NetworkBehaviour
      * de rotation de la souris fourni par le Update (hors simulation) pour l'ajustement de la rotation X de la
      * caméra (vue haut/bas) qui n'est pas incluse dans la simulation.
      */
-    public void AjustementVue(Vector2 vueInputVecteur)
-    {
-        vueInput = vueInputVecteur; 
-    }
+   
 }

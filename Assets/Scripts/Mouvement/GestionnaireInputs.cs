@@ -18,15 +18,14 @@ public class GestionnaireInputs : MonoBehaviour
     Vector2 mouvementInputVecteur = Vector2.zero;
     Vector2 vueInputVecteur = Vector2.zero;
     bool ilSaute;
-
-    GestionnaireMouvementPersonnage gestionnaireMouvementPersonnage;
+    GestionnaireCameraLocale gestionnaireCameraLocale;
 
     /*
      * Avant le Start(), on mémorise la référence au component GestionnaireMouvementPersonnage du joueur
      */
     void Awake()
     {
-        gestionnaireMouvementPersonnage = GetComponent<GestionnaireMouvementPersonnage>();
+        gestionnaireCameraLocale = GetComponentInChildren<GestionnaireCameraLocale>();
     }
 
     /*
@@ -44,6 +43,7 @@ public class GestionnaireInputs : MonoBehaviour
      * La rotation X (vue haut/bas) n'est pas importante pour les autres joueurs. Pourra se faire localement seulement
      * Appel de la fonction AjustementVue dans le script gestionnaireMouvementPersonnage en lui passant l'information
      * nécessaire pour la rotation (vueInputVecteur)
+     * 2.Si la touche de saut est appuyée, on met la variable ilSaute à true.
      */
     void Update()
     {
@@ -54,9 +54,9 @@ public class GestionnaireInputs : MonoBehaviour
         // 1. Vue
         vueInputVecteur.x = Input.GetAxis("Mouse X"); //important pour les autres joueurs
         vueInputVecteur.y = Input.GetAxis("Mouse Y"); // pas important pour les autres joueurs
-        gestionnaireMouvementPersonnage.AjustementVue(vueInputVecteur);
+        gestionnaireCameraLocale.SetInputVue(vueInputVecteur);
 
-        //Saut
+        //2.Saut
         if (Input.GetButtonDown("Jump"))
             ilSaute = true;
     }
@@ -66,6 +66,7 @@ public class GestionnaireInputs : MonoBehaviour
      * Lorsqu'elle est appelée, son rôle est de :
      * 1. créer une structure de données (struc) à partir du modèle DonneesInputReseau;
      * 2. définir les trois variables de la structure (mouvement, rotation et saute);
+     * Une fois la donnée de saut enregistrée pour le input réseau, on remet la variable ilSaute à false
      * 3. retourne au Runner la structure de données
      */
     public DonneesInputReseau GetInputReseau()
@@ -75,7 +76,7 @@ public class GestionnaireInputs : MonoBehaviour
 
         //2.
         donneesInputReseau.mouvementInput = mouvementInputVecteur;
-        donneesInputReseau.rotationInput = vueInputVecteur.x;
+        donneesInputReseau.vecteurDevant = gestionnaireCameraLocale.transform.forward;
         donneesInputReseau.saute = ilSaute;
         ilSaute = false;
        //3.

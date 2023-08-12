@@ -17,6 +17,7 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
 {
     public static JoueurReseau Local { get; set; } //.2
 
+    //Ajout d'une variable public Transform. Dans Unity, glisser l'objet "visuel" du prefab du joueur
     public Transform modeleJoueur;
 
 
@@ -26,22 +27,27 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
         {
             Local = this;
 
+            //Si c'est le joueur du client, on appel la fonction pour le rendre invisible
             Utilitaires.SetRenderLayerInChildren(modeleJoueur, LayerMask.NameToLayer("JoueurLocal"));
 
+            //On désactive la mainCamera. Assurez-vous que la caméra de départ possède bien le tag MainCamera
             Camera.main.gameObject.SetActive(false);
 
             Debug.Log("Un joueur local a été créé");
         }
         else
         {
+            //Si le joueur créé est contrôlé par un autre joueur, on désactive le component caméra de cet objet
             Camera camLocale = GetComponentInChildren<Camera>();
             camLocale.enabled = false;
 
+            // On désactive aussi le component AudioListener
             AudioListener audioListener = GetComponentInChildren<AudioListener>();
             audioListener.enabled = false;
 
             Debug.Log("Un joueur réseau a été créé");
         }
+        transform.name = $"Joueur_{Object.Id}";
     }
 
     public void PlayerLeft(PlayerRef player) //.4
