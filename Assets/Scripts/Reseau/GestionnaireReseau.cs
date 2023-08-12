@@ -11,6 +11,7 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
     //Contient référence au component NetworkRunner
     NetworkRunner _runner;
 
+    // pour mémoriser le component GestionnaireMouvementPersonnage du joueur
     GestionnaireInputs gestionnaireInputs;
 
     // Contient la référence au script JoueurReseau du Prefab
@@ -74,14 +75,22 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
         
     }
 
+    /*
+     * Fonction du Runner pour définir les inputs du client dans la simulation
+     * 1. On récupère le component GestionnaireInputs du joueur local
+     * 2. On définit (set) le paramètre input en lui donnant la structure de données (struc) qu'on récupère
+     * en appelant la fonction GestInputReseau du script GestionnaireInputs. Ouf...
+     */
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
+        //1.
         if(gestionnaireInputs == null && JoueurReseau.Local !=null)
         {
             
             gestionnaireInputs = JoueurReseau.Local.GetComponent<GestionnaireInputs>();
         }
 
+        //2.
         if(gestionnaireInputs !=null)
         {
             input.Set(gestionnaireInputs.GetInputReseau());
