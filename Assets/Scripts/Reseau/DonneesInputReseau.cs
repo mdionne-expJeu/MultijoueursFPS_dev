@@ -8,7 +8,7 @@ using Fusion;
  * 
  * Permet de mémoriser des valeurs avec de variables
  * mouvementInput : un vector2 qui servira au déplacement
- * rotatioIput : un float qui servira à faire pivoter le personnage
+ * vecteurDevant : un vecteur de direction représentant le devant (l'axe des Z) du personnage dans le monde
  * saute : un booleenne pour savoir le si personnage saute
  * Notez l'utilisation du type NetworkBool qui est une variable réseau qui sera automatiquement synchronisée
  * pour tous les clients

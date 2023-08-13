@@ -10,7 +10,7 @@ using UnityEngine;
  * - mouvementInputVecteur :Vector2 pour mémoriser axes vertical et horizontal
  * - vueInputVecteur : Vector2 pour mémoriser les déplacements de la souris, horizontal et vertical.
  * - ilSaute : bool qui sera activée lorsque le joueur saute
- * - gestionnaireMouvementPersonnage : pour mémoriser le component GestionnaireMouvementPersonnage du joueur
+ * - GestionnaireCameraLocale : pour mémoriser le component GestionnaireCameraLocale de la camera du joueur
  */
 
 public class GestionnaireInputs : MonoBehaviour
@@ -21,7 +21,7 @@ public class GestionnaireInputs : MonoBehaviour
     GestionnaireCameraLocale gestionnaireCameraLocale;
 
     /*
-     * Avant le Start(), on mémorise la référence au component GestionnaireMouvementPersonnage du joueur
+     * Avant le Start(), on mémorise la référence au component GestionnaireCameraLocale de la camera du joueur
      */
     void Awake()
     {
@@ -38,11 +38,11 @@ public class GestionnaireInputs : MonoBehaviour
     }
 
     /*
-     * On mémorise à chaque frame la valeurs des inputs
-     * 1.La rotation Y du personnage est importante pour les autres joueurs. Devra être synchronisée par le serveur
-     * La rotation X (vue haut/bas) n'est pas importante pour les autres joueurs. Pourra se faire localement seulement
-     * Appel de la fonction AjustementVue dans le script gestionnaireMouvementPersonnage en lui passant l'information
-     * nécessaire pour la rotation (vueInputVecteur)
+     * On mémorise à chaque frame la valeurs des inputs 
+     *  - clavier : Axis Horizontal et vertical 
+     *  - souris : Axis Mouse X et Mouse Y
+     * Appel de la fonction SetInputVue dans le script GestionnaireCameraLocale en lui passant l'information
+     * nécessaire pour la rotation de la caméra (vueInputVecteur)
      * 2.Si la touche de saut est appuyée, on met la variable ilSaute à true.
      */
     void Update()
@@ -51,12 +51,12 @@ public class GestionnaireInputs : MonoBehaviour
         mouvementInputVecteur.x = Input.GetAxis("Horizontal");
         mouvementInputVecteur.y = Input.GetAxis("Vertical");
 
-        // 1. Vue
-        vueInputVecteur.x = Input.GetAxis("Mouse X"); //important pour les autres joueurs
-        vueInputVecteur.y = Input.GetAxis("Mouse Y"); // pas important pour les autres joueurs
+        // Vue
+        vueInputVecteur.x = Input.GetAxis("Mouse X"); 
+        vueInputVecteur.y = Input.GetAxis("Mouse Y");
         gestionnaireCameraLocale.SetInputVue(vueInputVecteur);
 
-        //2.Saut
+        //Saut
         if (Input.GetButtonDown("Jump"))
             ilSaute = true;
     }
@@ -65,7 +65,7 @@ public class GestionnaireInputs : MonoBehaviour
      * Fonction qui sera appelée par le Runner qui gère la simulation (GestionnaireReseau). 
      * Lorsqu'elle est appelée, son rôle est de :
      * 1. créer une structure de données (struc) à partir du modèle DonneesInputReseau;
-     * 2. définir les trois variables de la structure (mouvement, rotation et saute);
+     * 2. définir les trois variables de la structure (mouvement, vecteurDevant et saute);
      * Une fois la donnée de saut enregistrée pour le input réseau, on remet la variable ilSaute à false
      * 3. retourne au Runner la structure de données
      */
@@ -76,7 +76,7 @@ public class GestionnaireInputs : MonoBehaviour
 
         //2.
         donneesInputReseau.mouvementInput = mouvementInputVecteur;
-        donneesInputReseau.vecteurDevant = gestionnaireCameraLocale.transform.forward;
+        donneesInputReseau.vecteurDevant = gestionnaireCameraLocale.gameObject.transform.forward;
         donneesInputReseau.saute = ilSaute;
         ilSaute = false;
        //3.
