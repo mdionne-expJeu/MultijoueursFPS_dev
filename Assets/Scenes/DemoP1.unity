@@ -1321,6 +1321,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   joueurPrefab: {fileID: 1308419149589605142, guid: 9a1c9fea907094d62aea405368ac6e5d, type: 3}
+  couleurTest:
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 0.07539272, g: 0, b: 1, a: 1}
+  - {r: 0.4067732, g: 1, b: 0, a: 1}
 --- !u!4 &2144436103
 Transform:
   m_ObjectHideFlags: 0

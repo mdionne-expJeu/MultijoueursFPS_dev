@@ -17,6 +17,9 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
     // Contient la référence au script JoueurReseau du Prefab
     public JoueurReseau joueurPrefab;
 
+    private Dictionary<int, Color> joueursCouleurs = new Dictionary<int, Color>();
+    public Color[] couleurTest;
+    public int nbJoueurs = 0;
     // Fonction asynchrone pour démarrer Fusion et créer une partie 
     async void CreationPartie(GameMode mode)
     {
@@ -52,6 +55,7 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
 
     /* Lorsqu'un joueur se connecte au serveur
      * 1.On vérifie si ce joueur est aussi le serveur. Si c'est le cas, on spawn un prefab de joueur.
+     * Bonne pratique : la commande Spawn() devrait être utilisé seulement par le serveur
     */
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
@@ -59,12 +63,17 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
         if(_runner.IsServer)
         {
             Debug.Log("Un joueur s'est connecté comme serveur. Spawn d'un joueur");
-            Debug.Log(player.PlayerId);
-            _runner.Spawn(joueurPrefab, Utilitaires.GetPositionSpawnAleatoire(), Quaternion.identity, player);
+            Debug.Log($"Création du joueur {player.PlayerId} par le serveur");
+           var leNouveu =  _runner.Spawn(joueurPrefab, Utilitaires.GetPositionSpawnAleatoire(), Quaternion.identity, player);
+            Debug.Log(leNouveu.GetType());
+            
+            leNouveu.maCouleur = couleurTest[nbJoueurs];
+            nbJoueurs++;
+            Debug.Log(couleurTest);
         }
         else
         {
-            Debug.Log("Un joueur s'est connecté comme clien. Spawn d'un joueur");
+            Debug.Log("Un joueur s'est connecté comme client. Spawn d'un joueur");
         }
     } 
 
@@ -79,7 +88,8 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
      * Fonction du Runner pour définir les inputs du client dans la simulation
      * 1. On récupère le component GestionnaireInputs du joueur local
      * 2. On définit (set) le paramètre input en lui donnant la structure de données (struc) qu'on récupère
-     * en appelant la fonction GestInputReseau du script GestionnaireInputs. Ouf...
+     * en appelant la fonction GestInputReseau du script GestionnaireInputs. Les valeurs seront mémorisées
+     * et nous pourrons les utilisées pour le déplacement du joueur dans un autre script.Ouf...
      */
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
