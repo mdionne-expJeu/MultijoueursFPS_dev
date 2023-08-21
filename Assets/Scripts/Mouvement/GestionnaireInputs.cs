@@ -17,8 +17,12 @@ public class GestionnaireInputs : MonoBehaviour
 {
     Vector2 mouvementInputVecteur = Vector2.zero;
     Vector2 vueInputVecteur = Vector2.zero;
-    bool ilSaute;
+    bool ilSaute = false;
+    bool ilTir = false;
+
+
     GestionnaireCameraLocale gestionnaireCameraLocale;
+    GestionnaireMouvementPersonnage gestionnaireMouvementPersonnage;
 
     /*
      * Avant le Start(), on mémorise la référence au component GestionnaireCameraLocale de la camera du joueur
@@ -26,6 +30,7 @@ public class GestionnaireInputs : MonoBehaviour
     void Awake()
     {
         gestionnaireCameraLocale = GetComponentInChildren<GestionnaireCameraLocale>();
+        gestionnaireMouvementPersonnage = GetComponent<GestionnaireMouvementPersonnage>();
     }
 
     /*
@@ -47,6 +52,9 @@ public class GestionnaireInputs : MonoBehaviour
      */
     void Update()
     {
+        if (!gestionnaireMouvementPersonnage.Object.HasInputAuthority)
+            return;
+
         // Déplacement
         mouvementInputVecteur.x = Input.GetAxis("Horizontal");
         mouvementInputVecteur.y = Input.GetAxis("Vertical");
@@ -59,6 +67,10 @@ public class GestionnaireInputs : MonoBehaviour
         //Saut
         if (Input.GetButtonDown("Jump"))
             ilSaute = true;
+
+        //Tir
+        if (Input.GetButtonDown("Fire1"))
+            ilTir = true;
     }
 
     /*
@@ -78,7 +90,11 @@ public class GestionnaireInputs : MonoBehaviour
         donneesInputReseau.mouvementInput = mouvementInputVecteur;
         donneesInputReseau.vecteurDevant = gestionnaireCameraLocale.gameObject.transform.forward;
         donneesInputReseau.saute = ilSaute;
+        donneesInputReseau.appuieBoutonTir = ilTir;
+
         ilSaute = false;
+        ilTir = false;
+        
        //3.
         return donneesInputReseau;
     }
