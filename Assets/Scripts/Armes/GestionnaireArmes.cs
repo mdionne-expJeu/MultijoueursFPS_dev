@@ -12,6 +12,11 @@ public class GestionnaireArmes : NetworkBehaviour
     float delaiTirLocal = 0.15f;
     float delaiTirServeur = 0.1f;
 
+    // pour le raycast
+    public Transform origineTir; // définir dans Unity avec la caméra
+    public LayerMask layerCollisionTir; // créer un layer NetWorkHitBox. Choisir ce layer + default dans l'inspecteur
+    public float distanceTir = 100f;
+
     public ParticleSystem particulesTir;
 
     // Start is called before the first frame update
@@ -30,12 +35,44 @@ public class GestionnaireArmes : NetworkBehaviour
         }
     }
 
-    void TirLocal(Vector3 vecteurTir)
+    void TirLocal(Vector3 vecteurDevant)
     {
         if (Time.time - tempsDernierTir < delaiTirLocal)
             return;
 
         StartCoroutine(EffetTirCoroutine());
+
+        //détection collision
+        //Object.InputAuthority (envoie au serveur le client a l'origine du tir)
+        // HitOptions.IncludePhysX : pour que les objets normaux unity soit considéré par le raycast
+        Runner.LagCompensation.Raycast(origineTir.position, vecteurDevant, distanceTir,Object.InputAuthority, out var infosCollisions, layerCollisionTir,HitOptions.IncludePhysX);
+        
+        bool toucheAutreJoueur = false;
+        float distanceJoueurTouche = infosCollisions.Distance;
+        
+        //Hitbox = Fusion Collider = autre objet dans le monde
+        if (infosCollisions.Hitbox != null)
+        {
+            Debug.Log($"{Time.time} {transform.name} a touché le joueur {infosCollisions.Hitbox.transform.root.name}");
+            toucheAutreJoueur = true;
+
+        }
+        else if (infosCollisions.Collider != null)
+        {
+            Debug.Log($"{Time.time} {transform.name} a touché l'objet {infosCollisions.Collider.transform.root.name}");
+        }
+
+            // Déboggage : pour voir le rayon. Seulement visible dans l'éditeur
+            if (toucheAutreJoueur)
+        {
+            Debug.DrawRay(origineTir.position, vecteurDevant * distanceJoueurTouche, Color.red, 1);
+        }
+        else
+        {
+            Debug.DrawRay(origineTir.position, vecteurDevant * distanceJoueurTouche, Color.green, 1);
+        }
+            // fin détection collision
+
         tempsDernierTir = Time.time;
     }
 
@@ -49,7 +86,7 @@ public class GestionnaireArmes : NetworkBehaviour
 
     static void OnTir(Changed<GestionnaireArmes> changed) //static. On doit appeler une fonction non static
     {
-        Debug.Log($"{Time.time} Valeur OnTir() = {changed.Behaviour.ilTir}");
+        //Debug.Log($"{Time.time} Valeur OnTir() = {changed.Behaviour.ilTir}");
 
         //Dans fonction static, on ne peut pas changer ilTir = true. Utiliser changed.Behaviour.ilTir
 
@@ -71,7 +108,7 @@ public class GestionnaireArmes : NetworkBehaviour
         if(!Object.HasInputAuthority)
         {
             particulesTir.Play();
-            Debug.Log("Tir du client disant" + Object.Id);
+            //Debug.Log("Tir du client disant" + Object.Id);
         }
     }
 }

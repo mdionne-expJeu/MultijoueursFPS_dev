@@ -1,5 +1,55 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1078571887302557454
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1753064079033493890}
+  - component: {fileID: 2759042634242919973}
+  m_Layer: 7
+  m_Name: HitBox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1753064079033493890
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1078571887302557454}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3541063379994715513}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2759042634242919973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1078571887302557454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1014831617, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Type: 1
+  SphereRadius: 0
+  BoxExtents: {x: 0.5, y: 1, z: 0.5}
+  Offset: {x: 0, y: 0, z: 0}
+  Root: {fileID: 7912414091151540144}
+  GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!1 &2125665950089150676
 GameObject:
   m_ObjectHideFlags: 0
@@ -406,6 +456,7 @@ GameObject:
   - component: {fileID: 4161528167590098456}
   - component: {fileID: 5384238827133802712}
   - component: {fileID: 7285899431121548458}
+  - component: {fileID: 7912414091151540144}
   m_Layer: 0
   m_Name: JoueurReseau
   m_TagString: Untagged
@@ -429,6 +480,7 @@ Transform:
   - {fileID: 2537277776096278973}
   - {fileID: 1915251000420157156}
   - {fileID: 1851301286634135908}
+  - {fileID: 1753064079033493890}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &4263771874716850800
@@ -498,6 +550,7 @@ MonoBehaviour:
   - {fileID: 8174276771092178509}
   - {fileID: 4161528167590098456}
   - {fileID: 7285899431121548458}
+  - {fileID: 7912414091151540144}
   SimulationBehaviours: []
 --- !u!114 &8174276771092178509
 MonoBehaviour:
@@ -575,7 +628,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _ilTir: 0
+  origineTir: {fileID: 1915251000420157156}
+  layerCollisionTir:
+    serializedVersion: 2
+    m_Bits: 129
+  distanceTir: 100
   particulesTir: {fileID: 4970178138633965343}
+--- !u!114 &7912414091151540144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8639864502040065975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1039544458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
+  Config: 1
+  BroadRadius: 1.2247449
+  Offset: {x: 0, y: 0, z: 0}
+  GizmosColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  Hitboxes:
+  - {fileID: 2759042634242919973}
 --- !u!1001 &6951181913326756136
 PrefabInstance:
   m_ObjectHideFlags: 0
