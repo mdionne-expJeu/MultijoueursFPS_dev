@@ -456,6 +456,7 @@ GameObject:
   - component: {fileID: 4161528167590098456}
   - component: {fileID: 5384238827133802712}
   - component: {fileID: 7285899431121548458}
+  - component: {fileID: 3037071828368603817}
   - component: {fileID: 7912414091151540144}
   m_Layer: 0
   m_Name: JoueurReseau
@@ -550,6 +551,7 @@ MonoBehaviour:
   - {fileID: 8174276771092178509}
   - {fileID: 4161528167590098456}
   - {fileID: 7285899431121548458}
+  - {fileID: 3037071828368603817}
   - {fileID: 7912414091151540144}
   SimulationBehaviours: []
 --- !u!114 &8174276771092178509
@@ -634,6 +636,23 @@ MonoBehaviour:
     m_Bits: 129
   distanceTir: 100
   particulesTir: {fileID: 4970178138633965343}
+--- !u!114 &3037071828368603817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8639864502040065975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 685e6039940b5488b822c70b5b2d148c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
+  _estMort: 0
+  uiCouleurTouche: {r: 1, g: 0, b: 0, a: 0.69411767}
+  uiImageTouche: {fileID: 5399365993344372276}
+  persoRenderer: {fileID: 9164962577342974317}
 --- !u!114 &7912414091151540144
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -817,6 +836,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5395f2818df824c71bb6acb24566dd83, type: 3}
+--- !u!114 &5399365993344372276 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3531111074520994136, guid: 5395f2818df824c71bb6acb24566dd83, type: 3}
+  m_PrefabInstance: {fileID: 8930462224155680620}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &7834144518463346876 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1681840462644430800, guid: 5395f2818df824c71bb6acb24566dd83, type: 3}

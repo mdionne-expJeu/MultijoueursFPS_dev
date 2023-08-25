@@ -56,6 +56,13 @@ public class GestionnaireArmes : NetworkBehaviour
             Debug.Log($"{Time.time} {transform.name} a touché le joueur {infosCollisions.Hitbox.transform.root.name}");
             toucheAutreJoueur = true;
 
+            //Section pour la gestion des points de vie
+
+            if(Object.HasStateAuthority) // si c'est le serveur on peut changer les ptsVie du joueur touché
+            {
+                infosCollisions.Hitbox.transform.root.GetComponent<GestionnairePointsDeVie>().PersoEstTouche();
+            }
+            //Fin Section pour la gestion des points de vie
         }
         else if (infosCollisions.Collider != null)
         {
