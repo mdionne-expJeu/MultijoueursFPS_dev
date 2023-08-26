@@ -79,7 +79,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 3541063379994715513}
+  m_Father: {fileID: 2537277776096278973}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3734831795843982092
 GameObject:
@@ -115,7 +115,7 @@ Transform:
   m_Children:
   - {fileID: 7309715251284111307}
   - {fileID: 7834144518463346876}
-  m_Father: {fileID: 3541063379994715513}
+  m_Father: {fileID: 2537277776096278973}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &4237258052330640105
 Camera:
@@ -388,6 +388,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8237411122040391488}
+  - {fileID: 1915251000420157156}
+  - {fileID: 1851301286634135908}
   m_Father: {fileID: 3541063379994715513}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &1961405467340124748
@@ -479,8 +481,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2537277776096278973}
-  - {fileID: 1915251000420157156}
-  - {fileID: 1851301286634135908}
   - {fileID: 1753064079033493890}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -653,6 +653,9 @@ MonoBehaviour:
   uiCouleurTouche: {r: 1, g: 0, b: 0, a: 0.69411767}
   uiImageTouche: {fileID: 5399365993344372276}
   persoRenderer: {fileID: 9164962577342974317}
+  modelJoueur: {fileID: 7595839750843803963}
+  particulesMort: {fileID: 4817986840635846212, guid: cee29fc4fd375c44588dfd4c0b0689d1, type: 3}
+  particulesMateriel: {fileID: 2100000, guid: 78d155092f25b4d4d84f37d28ec218b0, type: 2}
 --- !u!114 &7912414091151540144
 MonoBehaviour:
   m_ObjectHideFlags: 0

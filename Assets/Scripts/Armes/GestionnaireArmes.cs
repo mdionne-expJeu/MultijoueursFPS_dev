@@ -19,14 +19,18 @@ public class GestionnaireArmes : NetworkBehaviour
 
     public ParticleSystem particulesTir;
 
-    // Start is called before the first frame update
-    void Start()
+    GestionnairePointsDeVie gestionnairePointsDeVie;
+
+    void Awake()
     {
-        
+        gestionnairePointsDeVie = GetComponent<GestionnairePointsDeVie>();
     }
 
     public override void FixedUpdateNetwork()
     {
+       if (gestionnairePointsDeVie.estMort)
+            return;
+
        if(GetInput(out DonneesInputReseau donneesInputReseau))
         {
             if (donneesInputReseau.appuieBoutonTir)

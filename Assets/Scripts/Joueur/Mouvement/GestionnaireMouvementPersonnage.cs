@@ -18,6 +18,9 @@ public class GestionnaireMouvementPersonnage : NetworkBehaviour
     Camera camLocale;
     NetworkCharacterControllerPrototypeV2 networkCharacterControllerPrototypeV2;
 
+    GestionnairePointsDeVie gestionnairePointsDeVie;
+    bool respawnDemande = false;
+
     /*
      * Avant le Start(), on mémorise la référence au component networkCharacterControllerPrototypeV2 du joueur
      * On garde en mémoire la camera du joueur courant (GetComponentInChildren)
@@ -26,6 +29,7 @@ public class GestionnaireMouvementPersonnage : NetworkBehaviour
     {
         networkCharacterControllerPrototypeV2 = GetComponent<NetworkCharacterControllerPrototypeV2>();
         camLocale = GetComponentInChildren<Camera>();
+        gestionnairePointsDeVie = GetComponent<GestionnairePointsDeVie>();
     }
 
     /*
@@ -45,7 +49,19 @@ public class GestionnaireMouvementPersonnage : NetworkBehaviour
      */
     public override void FixedUpdateNetwork()
     {
+        if(Object.HasStateAuthority)
+        {
+            if (respawnDemande)
+            {
+                Respawn();
+                return;
+            }
+                
+            if (gestionnairePointsDeVie.estMort)
+                return;
+        }
         
+
         // 1.
         GetInput(out DonneesInputReseau donneesInputReseau);
         
@@ -69,7 +85,32 @@ public class GestionnaireMouvementPersonnage : NetworkBehaviour
 
         //4.saut, important de le faire après le déplacement
         if (donneesInputReseau.saute) networkCharacterControllerPrototypeV2.Jump();
+
+        VerifieSiPeroTombe();
         
-        
+    }
+
+    void VerifieSiPeroTombe()
+    {
+        if (transform.position.y < -10 && Object.HasStateAuthority)
+            Respawn();
+    }
+
+    public void DemandeRespawn()
+    {
+        respawnDemande = true;
+    }
+
+    void Respawn()
+    {
+        networkCharacterControllerPrototypeV2.TeleportToPosition(Utilitaires.GetPositionSpawnAleatoire());
+        respawnDemande = false;
+
+        gestionnairePointsDeVie.Respawn();
+    }
+    
+    public void ActivationCharacterController(bool estActif)
+    {
+        networkCharacterControllerPrototypeV2.Controller.enabled = estActif;
     }
 }

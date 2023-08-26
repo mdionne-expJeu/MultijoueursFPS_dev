@@ -21,11 +21,19 @@ public class GestionnairePointsDeVie : NetworkBehaviour
     public MeshRenderer persoRenderer; // pour signaler aux autres qu'on est touché
     Color couleurNormalPerso;
 
-
+    // pour la mort du perso
+    public GameObject modelJoueur;
+    public GameObject particulesMort;
+    HitboxRoot hitboxRoot; // pour empêcher collision lorsque mort
+    GestionnaireMouvementPersonnage gestionnaireMouvementPersonnage;
+    public Material particulesMateriel;
+    JoueurReseau joueurReseau;
 
     private void Awake()
     {
-          
+        hitboxRoot = GetComponent<HitboxRoot>();
+        gestionnaireMouvementPersonnage = GetComponent<GestionnaireMouvementPersonnage>();
+        joueurReseau = GetComponent<JoueurReseau>();
     }
 
     void Start()
@@ -37,7 +45,7 @@ public class GestionnairePointsDeVie : NetworkBehaviour
         couleurNormalPerso = persoRenderer.material.color;
     }
 
-    IEnumerator EffetTouche_co()
+    IEnumerator EffetTouche_CO()
     {
         persoRenderer.material.color = Color.white;
 
@@ -49,7 +57,12 @@ public class GestionnairePointsDeVie : NetworkBehaviour
 
         if (Object.HasInputAuthority && !estMort)
             uiImageTouche.color = new Color(0, 0, 0, 0);
+    }
 
+    IEnumerator RessurectionServeur_CO()
+    {
+        yield return new WaitForSeconds(2);
+        gestionnaireMouvementPersonnage.DemandeRespawn();
     }
 
     // Fonction appelée uniquement par le serveur
@@ -64,6 +77,7 @@ public class GestionnairePointsDeVie : NetworkBehaviour
         if(ptsVie <=0)
         {
             Debug.Log($"{Time.time} {transform.name} est mort");
+            StartCoroutine(RessurectionServeur_CO());
             estMort = true;
         }
     }
@@ -80,16 +94,60 @@ public class GestionnairePointsDeVie : NetworkBehaviour
             changed.Behaviour.ReductionPtsVie(); // pour appeler fonction non statique
     }
 
-    static void OnChangeEtat(Changed<GestionnairePointsDeVie> changed)
-    {
-        Debug.Log($"{Time.time} Valeur estMort = {changed.Behaviour.estMort}");
-    }
-
     private void ReductionPtsVie()
     {
         if (!estInitialise)
             return;
 
-        StartCoroutine(EffetTouche_co());
+        StartCoroutine(EffetTouche_CO());
+    }
+
+    static void OnChangeEtat(Changed<GestionnairePointsDeVie> changed)
+    {
+        Debug.Log($"{Time.time} Valeur estMort = {changed.Behaviour.estMort}");
+        bool estMortNouveau = changed.Behaviour.estMort;
+        changed.LoadOld();
+        bool estMortAncien = changed.Behaviour.estMort;
+
+        if(estMortNouveau)
+        {
+            changed.Behaviour.Mort();
+        }
+        else if(!estMortNouveau && estMortAncien)
+        {
+            changed.Behaviour.Resurrection();
+        }
+        
+    }
+
+    private void Mort()
+    {
+        modelJoueur.gameObject.SetActive(false);
+        hitboxRoot.HitboxRootActive = false;
+        gestionnaireMouvementPersonnage.ActivationCharacterController(false);
+        GameObject nouvelleParticule =  Instantiate(particulesMort, transform.position, Quaternion.identity);
+        particulesMateriel.color = joueurReseau.maCouleur;
+        Destroy(nouvelleParticule, 3);
+    }
+
+    private void Resurrection()
+    {
+        if(Object.HasInputAuthority)
+            uiImageTouche.color = new Color(0, 0, 0, 0);
+        hitboxRoot.HitboxRootActive = true;
+        gestionnaireMouvementPersonnage.ActivationCharacterController(true);
+        StartCoroutine(JoueurVisible());
+    }
+
+    IEnumerator JoueurVisible()
+    {
+        yield return new WaitForSeconds(0.1f);
+        modelJoueur.gameObject.SetActive(true);
+    }
+
+    public void Respawn()
+    {
+        ptsVie = ptsVieDepart;
+        estMort = false;
     }
 }
