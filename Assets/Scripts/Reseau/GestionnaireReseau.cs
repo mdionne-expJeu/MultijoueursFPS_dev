@@ -41,6 +41,7 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
             GameMode = mode,
             SessionName = "Chambre test",
             Scene = SceneManager.GetActiveScene().buildIndex,
+            PlayerCount = 10,
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
 
         });
@@ -62,6 +63,7 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
 
         if(_runner.IsServer)
         {
+            
             Debug.Log("Un joueur s'est connecté comme serveur. Spawn d'un joueur");
             Debug.Log($"Création du joueur {player.PlayerId} par le serveur");
            var leNouveu =  _runner.Spawn(joueurPrefab, Utilitaires.GetPositionSpawnAleatoire(), Quaternion.identity, player);
@@ -81,7 +83,7 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-        
+        Debug.Log($"Le joueur {player.PlayerId} a quitté la partie");
     }
 
     /*
@@ -114,27 +116,31 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     {
-        
+        if(shutdownReason == ShutdownReason.GameIsFull)
+        {
+            Debug.Log("Le maximum de joueur est atteint. Réessayer plus tard.");
+        }
+       
     }
 
     public void OnConnectedToServer(NetworkRunner runner)
     {
-       
+        Debug.Log("OnConnectedToServer");
     }
 
     public void OnDisconnectedFromServer(NetworkRunner runner)
     {
-       
+        Debug.Log("OnOnDisconnectedFromServer");
     }
 
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
     {
-        
+        Debug.Log("Connection demandée par = " + runner.GetPlayerUserId());
     }
 
     public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
     {
-        
+        Debug.Log("Connection refusée par = " + runner.GetPlayerUserId());
     }
 
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
