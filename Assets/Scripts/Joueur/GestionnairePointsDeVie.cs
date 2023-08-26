@@ -68,18 +68,28 @@ public class GestionnairePointsDeVie : NetworkBehaviour
         }
     }
 
-    public static void OnPtsVieChange(Changed<GestionnairePointsDeVie> changed)
+    // Fonction statiques : ne peuvent accèder au variable non static
+    static void OnPtsVieChange(Changed<GestionnairePointsDeVie> changed)
     {
         Debug.Log($"{Time.time} Valeur PtsVie = {changed.Behaviour.ptsVie}");
+
+        byte nouveauPtsvie = changed.Behaviour.ptsVie;
+        changed.LoadOld();
+        byte ancienPtsVie = changed.Behaviour.ptsVie;
+        if (nouveauPtsvie < ancienPtsVie)
+            changed.Behaviour.ReductionPtsVie(); // pour appeler fonction non statique
     }
 
-    public static void OnChangeEtat(Changed<GestionnairePointsDeVie> changed)
+    static void OnChangeEtat(Changed<GestionnairePointsDeVie> changed)
     {
         Debug.Log($"{Time.time} Valeur estMort = {changed.Behaviour.estMort}");
     }
 
-    private void GestionAffihageTouche()
+    private void ReductionPtsVie()
     {
+        if (!estInitialise)
+            return;
 
+        StartCoroutine(EffetTouche_co());
     }
 }
