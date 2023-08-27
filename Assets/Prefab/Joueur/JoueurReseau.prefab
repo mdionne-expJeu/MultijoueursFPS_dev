@@ -631,7 +631,7 @@ MonoBehaviour:
   _interpolationDataSource: 0
   _ilTir: 0
   origineTir: {fileID: 1915251000420157156}
-  layerCollisionTir:
+  layersCollisionTir:
     serializedVersion: 2
     m_Bits: 129
   distanceTir: 100

@@ -98,7 +98,7 @@ public class GestionnaireArmes : NetworkBehaviour
     */
     void TirLocal(Vector3 vecteurDevant)
     {
-
+        print("tirlocal");
         //1.
         if (Time.time - tempsDernierTir < delaiTirLocal)
             return;
