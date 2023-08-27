@@ -69,7 +69,7 @@ public class GestionnaireArmes : NetworkBehaviour
             if (donneesInputReseau.appuieBoutonTir)
             {
                 TirLocal(donneesInputReseau.vecteurDevant);
-                Debug.Log($"Je tire et je suis le joueur {Runner.GetPlayerUserId()}");
+                //Debug.Log($"Je tire et je suis le joueur {Runner.GetPlayerUserId()}");
             }
                 
         }
@@ -98,7 +98,7 @@ public class GestionnaireArmes : NetworkBehaviour
     */
     void TirLocal(Vector3 vecteurDevant)
     {
-        print("TirLocal");
+
         //1.
         if (Time.time - tempsDernierTir < delaiTirLocal)
             return;
