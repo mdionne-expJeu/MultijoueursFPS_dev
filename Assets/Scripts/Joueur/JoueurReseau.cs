@@ -17,6 +17,7 @@ using Fusion; // namespace pour utiliser les classes de Fusion
 public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
 {
     [Networked] public Color maCouleur { get; set; }
+
     public static JoueurReseau Local;  //.2
 
     //Ajout d'une variable public Transform. Dans Unity, glisser l'objet "visuel" du prefab du joueur
@@ -26,6 +27,7 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
     {
         GetComponentInChildren<MeshRenderer>().material.color = maCouleur;
     }
+
     public override void Spawned() //3.
     {
         if(Object.HasInputAuthority)
