@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion; // namespace pour utiliser les classes de Fusion
+using TMPro;
 /* 
  * 1.Les objets réseau ne doivent pas dériver de MonoBehavior, mais bien de NetworkBehavior
  * Importation de l'interface IPlayerLeft
@@ -16,6 +17,10 @@ using Fusion; // namespace pour utiliser les classes de Fusion
  */
 public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
 {
+    public TextMeshProUGUI nomDuJoueurTxt;
+    [Networked(OnChanged = nameof(ChangementDeNom_static))]
+    public NetworkString<_16> nomDujoueur { get; set; }
+
     //Variable qui sera automatiquement synchronisée par le serveur sur tous les clients
     [Networked] public Color maCouleur { get; set; }
 
@@ -63,6 +68,7 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
             Camera.main.gameObject.SetActive(false);
 
             Debug.Log("Un joueur local a été créé");
+            RPC_ChangementdeNom(PlayerPrefs.GetString("NomDuJoueur"));
            
            
         }
@@ -87,5 +93,25 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
         {
             Runner.Despawn(Object);
         }
+    }
+
+    static void ChangementDeNom_static(Changed<JoueurReseau> changed)
+    {
+        print("static changement de nom");
+        changed.Behaviour.ChangementDeNom();
+    }
+
+    private void ChangementDeNom()
+    {
+        print("instance changement de nom");
+        Debug.Log($"Le nom du joueur {gameObject.name} est changé pour {nomDujoueur}");
+        nomDuJoueurTxt.text = nomDujoueur.ToString();
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_ChangementdeNom(string leNom, RpcInfo infos = default)
+    {
+        this.nomDujoueur = leNom;
+        print(nomDujoueur);
     }
 }
