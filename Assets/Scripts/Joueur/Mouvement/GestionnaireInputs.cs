@@ -52,6 +52,7 @@ public class GestionnaireInputs : MonoBehaviour
      */
     void Update()
     {
+        // Optimisation : on exécute seulement le Update si le client contrôle ce joueur
         if (!gestionnaireMouvementPersonnage.Object.HasInputAuthority)
             return;
 

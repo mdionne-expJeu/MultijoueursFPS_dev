@@ -31,7 +31,7 @@ public class GestionnaireArmes : NetworkBehaviour
     public bool ilTir { get; set; } // variable réseau peuvent seulement être changée par le serveur (stateAuthority)
 
     float tempsDernierTir = 0;
-    float delaiTirLocal = 0.15f;
+    float delaiTirLocal = 0.2f;
     float delaiTirServeur = 0.1f;
 
     // pour le raycast
@@ -42,6 +42,8 @@ public class GestionnaireArmes : NetworkBehaviour
     public ParticleSystem particulesTir;
 
     GestionnairePointsDeVie gestionnairePointsDeVie;
+
+    bool enTraindetirer = false;
 
 
     /*
@@ -54,26 +56,29 @@ public class GestionnaireArmes : NetworkBehaviour
     }
 
     /*
-    * À chaque tick (frame réseau) on vérifie si le joueur a tiré. On récupère les données
-    * enregistrées dans la structure de données donneesInputReseau et on vérifie la variable
-    * appuieBoutonTir. Si elle est à true, on active la fonction TirLocal en passant comme paramètre le
-    * vector indiquant le devant du personnage.
+    * Fonction qui détecte le tir et déclenche tout le processus
+    * 1. Si le joueur est mort, on ne veut pas qu'il puisse tirer. On quitte la fonction immédiatement
+    * 2.On récupère les données enregistrées dans la structure de données donneesInputReseau et on 
+    * vérifie la variable appuieBoutonTir. Si elle est à true, on active la fonction TirLocal en passant
+    * comme paramètre le vector indiquant le devant du personnage.
     */
     public override void FixedUpdateNetwork()
     {
+        
+      //1.
        if (gestionnairePointsDeVie.estMort)
             return;
-
-       if(GetInput(out DonneesInputReseau donneesInputReseau))
+      //2.
+        if (GetInput(out DonneesInputReseau donneesInputReseau))
         {
             if (donneesInputReseau.appuieBoutonTir)
             {
                 TirLocal(donneesInputReseau.vecteurDevant);
-                //Debug.Log($"Je tire et je suis le joueur {Runner.GetPlayerUserId()}");
-            }
                 
+            }
         }
     }
+
     /* Gestion local du tir (sur le client)
     * 1.On sort de la fonction si le tir ne respecte pas le délais entre 2 tir.
     * 2.Appel de la coroutine qui activera les particules et lancera le Tir pour le réseau (autres clients)
@@ -98,13 +103,12 @@ public class GestionnaireArmes : NetworkBehaviour
     */
     void TirLocal(Vector3 vecteurDevant)
     {
-        print("tirlocal");
         //1.
-        if (Time.time - tempsDernierTir < delaiTirLocal)
-            return;
+        if (Time.time - tempsDernierTir < delaiTirLocal) return;
+        
         //2.
         StartCoroutine(EffetTirCoroutine());
-
+        
         //3.
         Runner.LagCompensation.Raycast(origineTir.position, vecteurDevant, distanceTir,Object.InputAuthority, out var infosCollisions, layersCollisionTir,HitOptions.IncludePhysX);
 
@@ -118,13 +122,13 @@ public class GestionnaireArmes : NetworkBehaviour
             Debug.Log($"{Time.time} {transform.name} a touché le joueur {infosCollisions.Hitbox.transform.root.name}");
             toucheAutreJoueur = true;
 
-            //Section pour la gestion des points de vie
-
-            if(Object.HasStateAuthority) // si c'est le serveur on peut changer les ptsVie du joueur touché
+            // si nous sommes sur le code exécuté sur le serveur :
+            // On appelle la fonction PersoEstTouche du joueur touché dans le script GestionnairePointsDeVie
+            if (Object.HasStateAuthority) 
             {
                 infosCollisions.Hitbox.transform.root.GetComponent<GestionnairePointsDeVie>().PersoEstTouche();
             }
-            //Fin Section pour la gestion des points de vie
+            
         }
         else if (infosCollisions.Collider != null)
         {
@@ -145,7 +149,7 @@ public class GestionnaireArmes : NetworkBehaviour
         tempsDernierTir = Time.time;
     }
 
-    /* Coroutine qui déclenche le système de particules et qui gère la variable bool ilTir en l'activant
+    /* Coroutine qui déclenche le système de particules localement et qui gère la variable bool ilTir en l'activant
      * d'abord (true) puis en la désactivant après un délai définit dans la variable delaiTirServeur.
      * Important : souvenez-vous de l'expression [Networked(OnChanged = nameof(OnTir))] associée à la
      * variable ilTir. En changeant cette variable ici, la fonction OnTir() sera automatiquement appelée.
@@ -153,9 +157,19 @@ public class GestionnaireArmes : NetworkBehaviour
     IEnumerator EffetTirCoroutine()
     {
         ilTir = true; // comme la variable networked est changé, la fonction OnTir sera appelée
-        particulesTir.Play();
+        if (Object.HasInputAuthority)
+        {
+            if (!Runner.IsResimulation) particulesTir.Play();
+        }
         yield return new WaitForSeconds(delaiTirServeur);
+        
         ilTir = false;
+    }
+
+    IEnumerator Test()
+    {
+        yield return new WaitForSeconds(1f);
+        enTraindetirer = false;
     }
 
     /* Fonction static (c'est obligé...) appelée par le serveur lorsque la variable ilTir est modifiée
@@ -169,7 +183,7 @@ public class GestionnaireArmes : NetworkBehaviour
      */
     static void OnTir(Changed<GestionnaireArmes> changed) //static. On doit appeler une fonction non static
     {
-        //Debug.Log($"{Time.time} Valeur OnTir() = {changed.Behaviour.ilTir}");
+        Debug.Log($"{Time.time} Valeur OnTir() = {changed.Behaviour.ilTir}");
 
         //Dans fonction static, on ne peut pas changer ilTir = true. Utiliser changed.Behaviour.ilTir
         //1.
@@ -194,10 +208,10 @@ public class GestionnaireArmes : NetworkBehaviour
     void TirDistant()
     {
         //seulement pour les objets distants (par pour le joueur local)
-        if(!Object.HasInputAuthority)
+        if (!Object.HasInputAuthority)
         {
             particulesTir.Play();
-            //Debug.Log("Tir du client disant" + Object.Id);
-        }
+            print("tirDistant");
+        } 
     }
 }

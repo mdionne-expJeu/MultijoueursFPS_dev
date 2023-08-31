@@ -587,7 +587,7 @@ MonoBehaviour:
   acceleration: 50
   braking: 30
   maxSpeed: 6
-  rotationSpeed: 400
+  rotationSpeed: 100
   vitesseVueHautBas: 80
   _IsGrounded: 0
   _Velocity: {x: 0, y: 0, z: 0}
@@ -654,7 +654,7 @@ MonoBehaviour:
   uiImageTouche: {fileID: 5399365993344372276}
   persoRenderer: {fileID: 9164962577342974317}
   modelJoueur: {fileID: 7595839750843803963}
-  particulesMort: {fileID: 4817986840635846212, guid: cee29fc4fd375c44588dfd4c0b0689d1, type: 3}
+  particulesMort_Prefab: {fileID: 4817986840635846212, guid: cee29fc4fd375c44588dfd4c0b0689d1, type: 3}
   particulesMateriel: {fileID: 2100000, guid: 78d155092f25b4d4d84f37d28ec218b0, type: 2}
 --- !u!114 &7912414091151540144
 MonoBehaviour:

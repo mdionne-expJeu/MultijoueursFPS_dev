@@ -18,7 +18,9 @@ public class GestionnaireMouvementPersonnage : NetworkBehaviour
     Camera camLocale;
     NetworkCharacterControllerPrototypeV2 networkCharacterControllerPrototypeV2;
 
+    // variable pour garder une référence au script gestionnairePointsDeVie;
     GestionnairePointsDeVie gestionnairePointsDeVie;
+    // variable pour savoir si un Respawn du joueur est demandé
     bool respawnDemande = false;
 
     /*
@@ -49,19 +51,18 @@ public class GestionnaireMouvementPersonnage : NetworkBehaviour
      */
     public override void FixedUpdateNetwork()
     {
-        if(Object.HasStateAuthority)
-        {
-            if (respawnDemande)
-            {
-                Respawn();
-                return;
-            }
-                
-            if (gestionnairePointsDeVie.estMort)
-                return;
-        }
+        //Si on est sur le serveur et qu'un respawn a été demandé, on appele la fonction Respawn()
         
-
+        if(Object.HasStateAuthority && respawnDemande)
+        {
+            Respawn();
+            return;
+        }
+        // Si le joueur est mort, on sort du script immédiatement
+        if (gestionnairePointsDeVie.estMort)
+                return;
+        
+        
         // 1.
         GetInput(out DonneesInputReseau donneesInputReseau);
         
@@ -96,6 +97,15 @@ public class GestionnaireMouvementPersonnage : NetworkBehaviour
             Respawn();
     }
 
+    /* Fonction publique appelée sur serveur uniquement, par la coroutine RessurectionServeur_CO() du
+     * script GestionnairePointsDeVie. L'origine de la séquence d'événements début dans le script
+     * GestionnairesArmes lorsq'un joueur es touché par un tir :
+     * - GestionnairesArmes : Appel la fonction PersoEstTouche() du script GestionnairePointDeVie;
+     * Notez que cet appel est fait uniquement sur l'hôte (le serveur) et ne s'exécute pas sur les clients
+     * - GestionnairesPointsDeVie : Appel la coroutine RessurectionServeur_CO() dans son propre script
+     * - Coroutine RessurectionServeur_CO() : Appel la fonction DemandeRespawn 
+     *   du script GestionnaireMouvementPersonnage
+     */
     public void DemandeRespawn()
     {
         respawnDemande = true;

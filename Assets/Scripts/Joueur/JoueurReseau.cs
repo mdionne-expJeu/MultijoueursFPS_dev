@@ -16,6 +16,7 @@ using Fusion; // namespace pour utiliser les classes de Fusion
  */
 public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
 {
+    //Variable qui sera automatiquement synchronisée par le serveur sur tous les clients
     [Networked] public Color maCouleur { get; set; }
 
     public static JoueurReseau Local;  //.2
@@ -23,10 +24,31 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
     //Ajout d'une variable public Transform. Dans Unity, glisser l'objet "visuel" du prefab du joueur
     public Transform modeleJoueur;
 
+    /*
+     * Au départ, on change la couleur du joueur. La variable maCouleur sera définie
+     * par le serveur dans le script GestionnaireReseau. La fonction Start() sera
+     * appelée après la fonction Spawned().
+     */
     private void Start()
     {
         GetComponentInChildren<MeshRenderer>().material.color = maCouleur;
     }
+
+    /*public override void FixedUpdateNetwork()
+    {
+        if(Object.HasStateAuthority)
+        {
+            Debug.Log($"FUN du StateAuthority pour le joueur {Object.Id}");
+        }
+        if (Object.HasInputAuthority)
+        {
+            Debug.Log($"FUN du InputAuthority pour le joueur {Object.Id}");
+        }
+        if(!Object.HasInputAuthority && !Object.HasStateAuthority)
+        {
+            Debug.Log($"FUN de AucuneAutorité pour le joueur {Object.Id}");
+        }
+    }*/
 
     public override void Spawned() //3.
     {
@@ -41,7 +63,7 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
             Camera.main.gameObject.SetActive(false);
 
             Debug.Log("Un joueur local a été créé");
-            print(maCouleur);
+           
            
         }
         else
