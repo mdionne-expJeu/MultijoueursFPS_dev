@@ -24,10 +24,18 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
     //Variable qui sera automatiquement synchronisée par le serveur sur tous les clients
     [Networked] public Color maCouleur { get; set; }
 
+    bool messageEnvoieDuNom;
+    MessagesJeuReseau messagesJeuReseau;
+
     public static JoueurReseau Local;  //.2
 
     //Ajout d'une variable public Transform. Dans Unity, glisser l'objet "visuel" du prefab du joueur
     public Transform modeleJoueur;
+
+    private void Awake()
+    {
+        messagesJeuReseau = GetComponent<MessagesJeuReseau>();
+    }
 
     /*
      * Au départ, on change la couleur du joueur. La variable maCouleur sera définie
@@ -89,6 +97,9 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
 
     public void PlayerLeft(PlayerRef player) //.4
     {
+        if (Object.HasStateAuthority)
+            messagesJeuReseau.EnvoieMessageJeuRPC(nomDujoueur.ToString(), "a quitté la partie");
+
         if(player == Object.InputAuthority)
         {
             Runner.Despawn(Object);
@@ -112,6 +123,12 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
     public void RPC_ChangementdeNom(string leNom, RpcInfo infos = default)
     {
         this.nomDujoueur = leNom;
-        print(nomDujoueur);
+
+        if(!messageEnvoieDuNom)
+        {
+            
+            messagesJeuReseau.EnvoieMessageJeuRPC(leNom, "a rejoint la partie");
+            messageEnvoieDuNom = true;
+        }
     }
 }
