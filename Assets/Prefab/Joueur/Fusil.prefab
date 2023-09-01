@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6858635797751001341}
   - component: {fileID: 3923505780469292942}
   m_Layer: 0
-  m_Name: AimCapsule
+  m_Name: CapsuleVisee
   m_TagString: IgnoreLayerChange
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -129,7 +129,7 @@ GameObject:
   - component: {fileID: 8300968091774474343}
   - component: {fileID: 3706314905497000154}
   m_Layer: 0
-  m_Name: HandleCylinder
+  m_Name: Manche
   m_TagString: IgnoreLayerChange
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -212,7 +212,7 @@ GameObject:
   - component: {fileID: 6676772180101739246}
   - component: {fileID: 247303514233474702}
   m_Layer: 0
-  m_Name: BarrelCylinder
+  m_Name: Cylindre
   m_TagString: IgnoreLayerChange
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

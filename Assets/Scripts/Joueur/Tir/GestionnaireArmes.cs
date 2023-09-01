@@ -36,14 +36,12 @@ public class GestionnaireArmes : NetworkBehaviour
 
     // pour le raycast
     public Transform origineTir; // définir dans Unity avec la caméra
-    public LayerMask layersCollisionTir; // définir dans Unity
+    public LayerMask layersCollisionTir; // définir dans Unity (Default et HitBoxReseau)
     public float distanceTir = 100f;
 
     public ParticleSystem particulesTir;
 
     GestionnairePointsDeVie gestionnairePointsDeVie;
-
-    bool enTraindetirer = false;
 
 
     /*
@@ -166,11 +164,6 @@ public class GestionnaireArmes : NetworkBehaviour
         ilTir = false;
     }
 
-    IEnumerator Test()
-    {
-        yield return new WaitForSeconds(1f);
-        enTraindetirer = false;
-    }
 
     /* Fonction static (c'est obligé...) appelée par le serveur lorsque la variable ilTir est modifiée
      * Note importante : dans une fonction static, on ne peut accéder aux variables et fonctions instanciées

@@ -981,9 +981,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 482049412813295207, guid: fc9c47ef068abce44afbb23a75a3d1c0, type: 3}
+      propertyPath: m_Name
+      value: CapsuleVisee
+      objectReference: {fileID: 0}
     - target: {fileID: 2379902543376957109, guid: fc9c47ef068abce44afbb23a75a3d1c0, type: 3}
       propertyPath: m_Name
       value: Fusil
+      objectReference: {fileID: 0}
+    - target: {fileID: 4320990898989788111, guid: fc9c47ef068abce44afbb23a75a3d1c0, type: 3}
+      propertyPath: m_Name
+      value: Manche
+      objectReference: {fileID: 0}
+    - target: {fileID: 5586035108875170148, guid: fc9c47ef068abce44afbb23a75a3d1c0, type: 3}
+      propertyPath: m_Name
+      value: Cylindre
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
