@@ -9,9 +9,9 @@ using UnityEngine.UI;
  * 
  * ##### Pour la gestion des points de vie ################################################
  * - ptsVie : variable Networked de type byte (moins lourd qu'un int) pour les points de vie du joueur.
- *            Appel de la fonction OnPtsVieChange dès que cette variable est modifiée.
+ *            Appel de la fonction OnPtsVieChange dès que cette variable est modifiée par le serveur
  * - estMort : variable bool pour savoir si le joueur est mort ou pas. Appel de la fonction OnChangeEtat
- *             dès que cette variable est modifiée
+ *             dès que cette variable est modifiée par le serveur.
  * - estInitialise : pour savoir si le joueur est initialisé.
  * - ptsVieDepart : le nombre de points de vie au commencement ou après un respawn 
  * 
@@ -33,7 +33,7 @@ using UnityEngine.UI;
 public class GestionnairePointsDeVie : NetworkBehaviour
 {
     [Networked(OnChanged = nameof(OnPtsVieChange))]
-    byte ptsVie { get; set; }
+    byte ptsVie { get; set; } //(byte : valeur possible entre 0 et 255, aucune valeur négative)
 
     [Networked(OnChanged = nameof(OnChangeEtat))]
     public bool estMort { get; set;}
@@ -41,19 +41,21 @@ public class GestionnairePointsDeVie : NetworkBehaviour
     bool estInitialise = false;
     const byte ptsVieDepart = 5;
 
-    public Color uiCouleurTouche;
-    public Image uiImageTouche;
-    public MeshRenderer persoRenderer;
+    public Color uiCouleurTouche; //à définir dans l'inspecteur
+    public Image uiImageTouche;//à définir dans l'inspecteur
+    public MeshRenderer persoRenderer;//à définir dans l'inspecteur
     Color couleurNormalPerso;
 
    
-    public GameObject modelJoueur;
-    public GameObject particulesMort_Prefab;
-    public Material particulesMateriel;
+    public GameObject modelJoueur;//à définir dans l'inspecteur
+    public GameObject particulesMort_Prefab;//à définir dans l'inspecteur
+    public Material particulesMateriel;//à définir dans l'inspecteur
     HitboxRoot hitboxRoot;
 
     GestionnaireMouvementPersonnage gestionnaireMouvementPersonnage;
     JoueurReseau joueurReseau;
+    MessagesJeuReseau messagesJeuReseau;
+    
 
 
     /*
@@ -65,6 +67,7 @@ public class GestionnairePointsDeVie : NetworkBehaviour
         hitboxRoot = GetComponent<HitboxRoot>();
         gestionnaireMouvementPersonnage = GetComponent<GestionnaireMouvementPersonnage>();
         joueurReseau = GetComponent<JoueurReseau>();
+        messagesJeuReseau = GetComponent<MessagesJeuReseau>();
     }
 
     /*
@@ -82,13 +85,13 @@ public class GestionnairePointsDeVie : NetworkBehaviour
     /* Fonction publique appelée uniquement par le serveur dans le script GestionnairesArmes du joueur qui
      * a tiré.
      * 1. On quitte la fonction immédiatement si le joueur touché est déjà mort
-     * 2. Soustraction d'un point de vie
+     * 2. Soustraction d'un point de vie.
      * 3. Si les points de vie sont à 0 (ou moins), la variable estMort est mise à true et on appelle
      * la coroutine RessurectionServeur_CO qui gérera un éventuel respawn du joueur
      * Important : souvenez-vous que les variables ptsVie et estMort sont de type [Networked] et qu'une 
      * fonction sera automatiquement appelée lorsque leur valeur change.
     */
-    public void PersoEstTouche()
+    public void PersoEstTouche(string dommageFaitParQui)
     {
         //1.
         if (estMort)
@@ -100,7 +103,8 @@ public class GestionnairePointsDeVie : NetworkBehaviour
         //3.
         if (ptsVie <= 0)
         {
-            Debug.Log($"{Time.time} {transform.name} est mort");
+            //Debug.Log($"{Time.time} {transform.name} est mort");
+            messagesJeuReseau.EnvoieMessageJeuRPC(dommageFaitParQui, $" a éliminé <b>{joueurReseau.nomDujoueur}</b>");
             StartCoroutine(RessurectionServeur_CO());
             estMort = true;
         }

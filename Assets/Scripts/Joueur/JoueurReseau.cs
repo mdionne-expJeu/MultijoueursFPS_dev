@@ -32,6 +32,9 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
     //Ajout d'une variable public Transform. Dans Unity, glisser l'objet "visuel" du prefab du joueur
     public Transform modeleJoueur;
 
+    public GestionnaireCameraLocale gestionnaireCameraLocale;
+    public GameObject LocalUI;
+
     private void Awake()
     {
         messagesJeuReseau = GetComponent<MessagesJeuReseau>();
@@ -90,15 +93,28 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
             AudioListener audioListener = GetComponentInChildren<AudioListener>();
             audioListener.enabled = false;
 
+            LocalUI.SetActive(false);
+
             Debug.Log("Un joueur réseau a été créé");
         }
+
+        //Définir le joueur pour le joueur local
+        Runner.SetPlayerObject(Object.InputAuthority, Object);
+
         transform.name = $"Joueur_{Object.Id}";
     }
 
     public void PlayerLeft(PlayerRef player) //.4
     {
         if (Object.HasStateAuthority)
-            messagesJeuReseau.EnvoieMessageJeuRPC(nomDujoueur.ToString(), "a quitté la partie");
+        {
+            if(Runner.TryGetPlayerObject(player, out NetworkObject leJoueurQuiQuitte))
+            {
+                if (leJoueurQuiQuitte == Object)
+                    Local.GetComponent<MessagesJeuReseau>().EnvoieMessageJeuRPC(leJoueurQuiQuitte.GetComponent<JoueurReseau>().nomDujoueur.ToString(), "a quitté la partie");
+            }
+        }
+            //messagesJeuReseau.EnvoieMessageJeuRPC(nomDujoueur.ToString(), "a quitté la partie");
 
         if(player == Object.InputAuthority)
         {
@@ -122,8 +138,9 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
     public void RPC_ChangementdeNom(string leNom, RpcInfo infos = default)
     {
+        //éxécuté sur serveur uniquement
         this.nomDujoueur = leNom;
-
+        Debug.Log("RPC_ChangementdeNom");
         if(!messageEnvoieDuNom)
         {
             

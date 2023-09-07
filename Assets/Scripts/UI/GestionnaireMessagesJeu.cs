@@ -17,7 +17,8 @@ public class GestionnaireMessagesJeu : MonoBehaviour
     public void ReceptionMessage(string messageRecu)
     {
         Debug.Log($"Message reçu : {messageRecu}");
-
+        Debug.Log(transform.root.name);
+        
         messagesQueue.Enqueue(messageRecu);
 
         if (messagesQueue.Count > 3)

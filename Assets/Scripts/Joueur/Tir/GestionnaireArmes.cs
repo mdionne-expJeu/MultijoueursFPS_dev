@@ -42,6 +42,7 @@ public class GestionnaireArmes : NetworkBehaviour
     public ParticleSystem particulesTir;
 
     GestionnairePointsDeVie gestionnairePointsDeVie;
+    JoueurReseau joueurReseau;
 
 
     /*
@@ -51,6 +52,7 @@ public class GestionnaireArmes : NetworkBehaviour
     void Awake()
     {
         gestionnairePointsDeVie = GetComponent<GestionnairePointsDeVie>();
+        joueurReseau = GetComponent<JoueurReseau>();
     }
 
     /*
@@ -108,7 +110,7 @@ public class GestionnaireArmes : NetworkBehaviour
         StartCoroutine(EffetTirCoroutine());
         
         //3.
-        Runner.LagCompensation.Raycast(origineTir.position, vecteurDevant, distanceTir,Object.InputAuthority, out var infosCollisions, layersCollisionTir,HitOptions.IncludePhysX);
+        Runner.LagCompensation.Raycast(origineTir.position, vecteurDevant, distanceTir,Object.InputAuthority, out var infosCollisions, layersCollisionTir,HitOptions.IgnoreInputAuthority);
 
         //4.
         bool toucheAutreJoueur = false;
@@ -117,14 +119,14 @@ public class GestionnaireArmes : NetworkBehaviour
         //5.
         if (infosCollisions.Hitbox != null)
         {
-            Debug.Log($"{Time.time} {transform.name} a touché le joueur {infosCollisions.Hitbox.transform.root.name}");
+            //Debug.Log($"{Time.time} {transform.name} a touché le joueur {infosCollisions.Hitbox.transform.root.name}");
             toucheAutreJoueur = true;
 
             // si nous sommes sur le code exécuté sur le serveur :
             // On appelle la fonction PersoEstTouche du joueur touché dans le script GestionnairePointsDeVie
             if (Object.HasStateAuthority) 
             {
-                infosCollisions.Hitbox.transform.root.GetComponent<GestionnairePointsDeVie>().PersoEstTouche();
+                infosCollisions.Hitbox.transform.root.GetComponent<GestionnairePointsDeVie>().PersoEstTouche(joueurReseau.nomDujoueur.ToString());
             }
             
         }
@@ -204,7 +206,6 @@ public class GestionnaireArmes : NetworkBehaviour
         if (!Object.HasInputAuthority)
         {
             particulesTir.Play();
-            print("tirDistant");
         } 
     }
 }
