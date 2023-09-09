@@ -39,11 +39,15 @@ public class GestionnaireArmes : NetworkBehaviour
     public LayerMask layersCollisionTir; // définir dans Unity (Default et HitBoxReseau)
     public float distanceTir = 100f;
 
-    public ParticleSystem particulesTir;
+    
+    public GameObject prefabGrenade;
 
     GestionnairePointsDeVie gestionnairePointsDeVie;
     JoueurReseau joueurReseau;
 
+    //pour Grenade
+    public ParticleSystem particulesTir;
+    TickTimer delaiTirGrenade = TickTimer.None;
 
     /*
      * On garde en mémoire le component (script) GestionnairePointsDeVie pour pouvoir
@@ -76,6 +80,12 @@ public class GestionnaireArmes : NetworkBehaviour
                 TirLocal(donneesInputReseau.vecteurDevant);
                 
             }
+
+            if (donneesInputReseau.appuieBoutonGrenade)
+            {
+               LanceGrenade(donneesInputReseau.vecteurDevant);
+
+            }
         }
     }
 
@@ -103,6 +113,7 @@ public class GestionnaireArmes : NetworkBehaviour
     */
     void TirLocal(Vector3 vecteurDevant)
     {
+        Debug.Log("tir local debut");
         //1.
         if (Time.time - tempsDernierTir < delaiTirLocal) return;
         
@@ -119,6 +130,7 @@ public class GestionnaireArmes : NetworkBehaviour
         //5.
         if (infosCollisions.Hitbox != null)
         {
+            Debug.Log("tir local hitboxtouché");
             //Debug.Log($"{Time.time} {transform.name} a touché le joueur {infosCollisions.Hitbox.transform.root.name}");
             toucheAutreJoueur = true;
 
@@ -126,7 +138,8 @@ public class GestionnaireArmes : NetworkBehaviour
             // On appelle la fonction PersoEstTouche du joueur touché dans le script GestionnairePointsDeVie
             if (Object.HasStateAuthority) 
             {
-                infosCollisions.Hitbox.transform.root.GetComponent<GestionnairePointsDeVie>().PersoEstTouche(joueurReseau.nomDujoueur.ToString());
+                Debug.Log("tir appel fonction persotouche()");
+                infosCollisions.Hitbox.transform.root.GetComponent<GestionnairePointsDeVie>().PersoEstTouche(joueurReseau.nomDujoueur.ToString(),1);
             }
             
         }
@@ -207,5 +220,28 @@ public class GestionnaireArmes : NetworkBehaviour
         {
             particulesTir.Play();
         } 
+    }
+
+    void LanceGrenade(Vector3 vecteurDevant)
+    {
+        
+
+        if (delaiTirGrenade.ExpiredOrNotRunning(Runner))
+        {
+            Vector3 positionGrenade = origineTir.position + vecteurDevant * 1.5f;
+            Quaternion orientationGrenade = Quaternion.LookRotation(vecteurDevant);
+
+            //NetworkObject laGrenade=  Runner.Spawn(prefabGrenade, positionGrenade, orientationGrenade, Object.InputAuthority);
+            //laGrenade.GetComponent<GestionnaireGrenade>().LanceGrenade(vecteurDevant * 15, Object.InputAuthority, joueurReseau.nomDujoueur.ToString());
+
+            Debug.Log("Création d'une grenade");
+            // commande exécutée juste sur le serveur
+            Runner.Spawn(prefabGrenade, positionGrenade, orientationGrenade, Object.InputAuthority, (runner, laGrenade) =>
+            {
+                laGrenade.GetComponent<GestionnaireGrenade>().LanceGrenade(vecteurDevant * 15, Object.InputAuthority, joueurReseau.nomDujoueur.ToString());
+            });
+
+        delaiTirGrenade = TickTimer.CreateFromSeconds(Runner, 1f);
+        }
     }
 }
