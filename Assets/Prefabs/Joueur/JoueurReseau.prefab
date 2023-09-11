@@ -741,14 +741,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  _ilTir: 0
+  prefabGrenade: {fileID: 6026458204599858278, guid: 79db7b820cd9aa041ac6c26d1887ad8a, type: 3}
+  prefabFusee: {fileID: 3057452113544747960, guid: e227a6d3f9e26d843927ac601dbc7382, type: 3}
+  particulesTir: {fileID: 4970178138633965343}
   origineTir: {fileID: 1915251000420157156}
   layersCollisionTir:
     serializedVersion: 2
     m_Bits: 129
   distanceTir: 100
-  particulesTir: {fileID: 4970178138633965343}
-  prefabGrenade: {fileID: 6026458204599858278, guid: 79db7b820cd9aa041ac6c26d1887ad8a, type: 3}
+  _ilTir: 0
 --- !u!114 &3037071828368603817
 MonoBehaviour:
   m_ObjectHideFlags: 0

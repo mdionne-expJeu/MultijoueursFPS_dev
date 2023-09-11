@@ -20,6 +20,8 @@ public class GestionnaireMouvementPersonnage : NetworkBehaviour
 
     // variable pour garder une référence au script gestionnairePointsDeVie;
     GestionnairePointsDeVie gestionnairePointsDeVie;
+    MessagesJeuReseau messagesJeuReseau;
+    JoueurReseau joueurReseau;
     // variable pour savoir si un Respawn du joueur est demandé
     bool respawnDemande = false;
 
@@ -32,6 +34,8 @@ public class GestionnaireMouvementPersonnage : NetworkBehaviour
         networkCharacterControllerPrototypeV2 = GetComponent<NetworkCharacterControllerPrototypeV2>();
         camLocale = GetComponentInChildren<Camera>();
         gestionnairePointsDeVie = GetComponent<GestionnairePointsDeVie>();
+        messagesJeuReseau = GetComponent<MessagesJeuReseau>();
+        joueurReseau = GetComponent<JoueurReseau>();
     }
 
     /*
@@ -61,7 +65,6 @@ public class GestionnaireMouvementPersonnage : NetworkBehaviour
         // Si le joueur est mort, on sort du script immédiatement
         if (gestionnairePointsDeVie.estMort)
                 return;
-        
         
         // 1.
         GetInput(out DonneesInputReseau donneesInputReseau);
@@ -94,7 +97,11 @@ public class GestionnaireMouvementPersonnage : NetworkBehaviour
     void VerifieSiPeroTombe()
     {
         if (transform.position.y < -10 && Object.HasStateAuthority)
+        {
+            messagesJeuReseau.EnvoieMessageJeuRPC(joueurReseau.nomDujoueur.ToString(), "est tombé de la surface de jeu!");
             Respawn();
+        }
+            
     }
 
     /* Fonction publique appelée sur serveur uniquement, par la coroutine RessurectionServeur_CO() du
@@ -111,14 +118,21 @@ public class GestionnaireMouvementPersonnage : NetworkBehaviour
         respawnDemande = true;
     }
 
+    /* Fonction qui appelle la fonction TeleportToPosition du script networkCharacterControllerPrototypeV2
+     * 1. Téléporte à un point aléatoire et modifie la variable respawnDemande à false
+     * 2. Appelle la fonction Respawn() du script gestionnairePointsDeVie
+     */
     void Respawn()
     {
+        //1.
         networkCharacterControllerPrototypeV2.TeleportToPosition(Utilitaires.GetPositionSpawnAleatoire());
         respawnDemande = false;
-
+        //2.
         gestionnairePointsDeVie.Respawn();
     }
-    
+
+    /* Fonction publique qui active ou désactive le script networkCharacterControllerPrototypeV2
+     */
     public void ActivationCharacterController(bool estActif)
     {
         networkCharacterControllerPrototypeV2.Controller.enabled = estActif;

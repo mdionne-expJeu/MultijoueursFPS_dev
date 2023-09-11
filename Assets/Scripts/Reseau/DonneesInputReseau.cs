@@ -22,4 +22,5 @@ public struct DonneesInputReseau : INetworkInput
      la variable sera définie dans le script GestionnaireInputs*/
     public NetworkBool appuieBoutonTir;
     public NetworkBool appuieBoutonGrenade;
+    public NetworkBool appuieBoutonFusee;
 }
