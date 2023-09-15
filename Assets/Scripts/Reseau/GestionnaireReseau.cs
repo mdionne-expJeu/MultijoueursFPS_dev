@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using Fusion;
 using Fusion.Sockets;
 using System;
+using System.Threading.Tasks;
 
 public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
 {
@@ -22,15 +23,42 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
    // Pour compteur le nombre de joueurs connectés
     public int nbJoueurs = 0;
 
-    // Fonction asynchrone pour démarrer Fusion et créer une partie 
-    async void CreationPartie(GameMode mode)
+    
+
+    private void Awake()
     {
-        /*  1.Ajout du component NetworkRunne au gameObject. On garde en mémoire
+        // Si déjà créé, on ne veut pas recréer le networkrunner
+        NetworkRunner RunnerDejaActif = FindFirstObjectByType<NetworkRunner>();
+
+        if (RunnerDejaActif != null)
+            _runner = RunnerDejaActif;
+    }
+
+    void Start()
+    {
+        // Création d'une partie dès le départ
+        if(_runner == null)
+        {
+            /*  1.Ajout du component NetworkRunne au gameObject. On garde en mémoire
             la référence à ce component dans la variable _runner.
             2.Indique au NetworkRunner qu'il doit fournir les inputs au simulateur (Fusion)
         */
-        _runner = gameObject.AddComponent<NetworkRunner>();
-        _runner.ProvideInput = true;
+            _runner = gameObject.AddComponent<NetworkRunner>();
+            _runner.ProvideInput = true;
+            
+        }
+        if(SceneManager.GetActiveScene().name != "Accueil")
+        {
+            CreationPartie(GameMode.AutoHostOrClient, "TestSession",1);
+            
+        }
+            
+    }
+
+    // Fonction asynchrone pour démarrer Fusion et créer une partie 
+    async void CreationPartie(GameMode mode, string nomSession, int indexScene)
+    {
+
 
         /*Méthode du NetworkRunner qui permet d'initialiser une partie
          * GameMode : reçu en argument. Valeur possible : Client, Host, Server, AutoHostOrClient, etc.)
@@ -41,18 +69,15 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
         await _runner.StartGame(new StartGameArgs()
         {
             GameMode = mode,
-            SessionName = "Chambre test",
-            Scene = SceneManager.GetActiveScene().buildIndex,
+            SessionName = nomSession,
+            CustomLobbyName = "IdDuLobby",
+            Scene = indexScene,
             PlayerCount = 10, //limite de 10 joueurs
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
-        });
+        }); ;
     }
 
-    void Start()
-    {
-        // Création d'une partie dès le départ
-        CreationPartie(GameMode.AutoHostOrClient);
-    }
+    
 
 
     /* Lorsqu'un joueur se connecte au serveur
@@ -182,5 +207,36 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
     public void OnSceneLoadStart(NetworkRunner runner)
     {
        
+    }
+
+    public void RejoindreLeLobby()
+    {
+        Task tacheConnexionLobby = ConnextionAuLobby();
+    }
+
+    private async Task ConnextionAuLobby()
+    {
+        Debug.Log("Connexion au lobby démarée");
+        string nomDuLobby = "NomDuLobby";
+
+        StartGameResult resultat = await _runner.JoinSessionLobby(SessionLobby.Custom, nomDuLobby);
+
+        if(resultat.Ok)
+        {
+            Debug.Log("Connexion au lobby effectuée avec succès");
+        }
+        else
+        {
+            Debug.LogError($"Incapable de se connecter au lobby {nomDuLobby}");
+        }
+    }
+
+    public void CreationPartie(string nomSession, string nomScene)
+    {
+        int indexScene = SceneUtility.GetBuildIndexByScenePath($"Scenes/{nomScene}");
+        Debug.Log($"Création de la session {nomSession} scène {nomScene} build index {indexScene}");
+
+        CreationPartie(GameMode.Host, nomSession, indexScene);
+
     }
 }

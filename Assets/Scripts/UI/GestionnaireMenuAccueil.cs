@@ -19,7 +19,7 @@ public class GestionnaireMenuAccueil : MonoBehaviour
         PlayerPrefs.SetString("NomDuJoueur", inputField.text);
         PlayerPrefs.Save();
 
-        SceneManager.LoadScene("DemoP1");
+        SceneManager.LoadScene("Jeu");
     }
 
     
