@@ -480,7 +480,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   txt_NomSession: {fileID: 8043014799563695460}
-  txt_NombreJoueurs: {fileID: 8043014799563695460}
+  txt_NombreJoueurs: {fileID: 8474860807662908259}
   btn_Joindre: {fileID: 1256493882189334338}
 --- !u!1 &7898579621970774003
 GameObject:

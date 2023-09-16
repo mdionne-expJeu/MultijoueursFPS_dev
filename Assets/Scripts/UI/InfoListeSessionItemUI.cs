@@ -20,6 +20,7 @@ public class InfoListeSessionItemUI : MonoBehaviour
     public void EnregistreInfos(SessionInfo sessionInfos)
     {
         this.sessionInfos = sessionInfos;
+        txt_NomSession.text = $"{sessionInfos.Name}";
         txt_NombreJoueurs.text = $"{sessionInfos.PlayerCount.ToString()}/{sessionInfos.MaxPlayers.ToString()}";
 
         bool boutonJoindreActif = true;

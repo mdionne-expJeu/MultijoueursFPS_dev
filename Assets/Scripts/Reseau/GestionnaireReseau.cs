@@ -23,12 +23,15 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
    // Pour compteur le nombre de joueurs connectés
     public int nbJoueurs = 0;
 
+    GestionnaireListeSessions gestionnaireListeSessions;
+
     
 
     private void Awake()
     {
         // Si déjà créé, on ne veut pas recréer le networkrunner
         NetworkRunner RunnerDejaActif = FindFirstObjectByType<NetworkRunner>();
+        gestionnaireListeSessions = FindFirstObjectByType<GestionnaireListeSessions>(FindObjectsInactive.Include); //true pour les objets inactifs
 
         if (RunnerDejaActif != null)
             _runner = RunnerDejaActif;
@@ -49,7 +52,7 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
         }
         if(SceneManager.GetActiveScene().name != "Accueil")
         {
-            CreationPartie(GameMode.AutoHostOrClient, "TestSession",1);
+           // CreationPartie(GameMode.AutoHostOrClient, "TestSession",1);
             
         }
             
@@ -181,7 +184,24 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
     {
-        
+        if (gestionnaireListeSessions == null)
+            return;
+
+        if(sessionList.Count == 0)
+        {
+            Debug.Log("Lobby rejoint. Aucune session active");
+            gestionnaireListeSessions.AucuneSessionTrouvee();
+        }
+        else
+        {
+            gestionnaireListeSessions.EffaceListe();
+
+            foreach(SessionInfo sessionInfo in sessionList)
+            {
+                gestionnaireListeSessions.AjouteListe(sessionInfo);
+                Debug.Log($"Session {sessionInfo.Name} trouvée. Nombre de joueurs = {sessionInfo.PlayerCount}");
+            }
+        }
     }
 
     public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data)
@@ -237,6 +257,20 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
         Debug.Log($"Création de la session {nomSession} scène {nomScene} build index {indexScene}");
 
         CreationPartie(GameMode.Host, nomSession, indexScene);
+    }
 
+    public void RejoindrePartie(SessionInfo sessionInfo)
+    {
+        Debug.Log($"Rejoindre session {sessionInfo.Name}");
+        int indexScene = SceneManager.GetActiveScene().buildIndex;
+        CreationPartie(GameMode.Client, sessionInfo.Name, indexScene);
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Backspace))
+        {
+            Debug.ClearDeveloperConsole();
+        }
     }
 }
