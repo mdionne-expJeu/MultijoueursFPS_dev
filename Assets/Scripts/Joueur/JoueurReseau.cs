@@ -35,6 +35,8 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
     public GestionnaireCameraLocale gestionnaireCameraLocale;
     public GameObject LocalUI;
 
+    
+
     private void Awake()
     {
         messagesJeuReseau = GetComponent<MessagesJeuReseau>();
@@ -133,7 +135,7 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
         print("instance changement de nom");
         Debug.Log($"Le nom du joueur {gameObject.name} est changé pour {nomDujoueur}");
         nomDuJoueurTxt.text = nomDujoueur.ToString();
-        GetComponent<GestionnairePointage>().EnregistrementNom(nomDujoueur);
+        GetComponent<GestionnairePointage>().EnregistrementNom(nomDujoueur.ToString());
     }
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]

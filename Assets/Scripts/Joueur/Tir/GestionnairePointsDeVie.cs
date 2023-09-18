@@ -101,7 +101,7 @@ public class GestionnairePointsDeVie : NetworkBehaviour
             dommage = ptsVie;
 
         ptsVie -= dommage;
-        Debug.Log($"{Time.time} {transform.name} est touché. Il lui reste {ptsVie} points de vie");
+        //.Log($"{Time.time} {transform.name} est touché. Il lui reste {ptsVie} points de vie");
 
         //3.
         if (ptsVie <= 0)
@@ -141,7 +141,7 @@ public class GestionnairePointsDeVie : NetworkBehaviour
      */
     static void OnPtsVieChange(Changed<GestionnairePointsDeVie> changed)
     {
-        Debug.Log($"{Time.time} Valeur PtsVie = {changed.Behaviour.ptsVie}");
+        //Debug.Log($"{Time.time} Valeur PtsVie = {changed.Behaviour.ptsVie}");
         //1.
         byte nouveauPtsvie = changed.Behaviour.ptsVie;
         //2.
@@ -207,7 +207,7 @@ public class GestionnairePointsDeVie : NetworkBehaviour
      */
     static void OnChangeEtat(Changed<GestionnairePointsDeVie> changed)
     {
-        Debug.Log($"{Time.time} Valeur estMort = {changed.Behaviour.estMort}");
+        //.Log($"{Time.time} Valeur estMort = {changed.Behaviour.estMort}");
         //1.
         bool estMortNouveau = changed.Behaviour.estMort;
         //2.
