@@ -31,7 +31,7 @@ public class MessagesJeuReseau : NetworkBehaviour
 
         if(gestionnaireMessagesJeu != null)
         {
-            gestionnaireMessagesJeu.ReceptionMessage(leMessage);
+            gestionnaireMessagesJeu.ReceptionMessage($"<b>{nomDuJoueur}</b> {leMessage}");
         }
 
         if(leMessage == "a quitté la partie")
