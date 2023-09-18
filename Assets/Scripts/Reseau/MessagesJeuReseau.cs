@@ -17,14 +17,14 @@ public class MessagesJeuReseau : NetworkBehaviour
     {
         //éxécuté par serveur uniquement
         print("fonction pour envoie de message RPC activée");
-        RPC_MessagesJeu($"<b>{nomDuJoueur}</b> {leMessage}");
+        RPC_MessagesJeu(nomDuJoueur,leMessage);
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    void RPC_MessagesJeu(string leMessage, RpcInfo infos = default)
+    void RPC_MessagesJeu(string nomDuJoueur,string leMessage, RpcInfo infos = default)
     {
         //Envoyé par le serveur, reçu par tout le monde
-        Debug.Log($"RPC MessageJeu {leMessage}");
+        Debug.Log($"RPC MessageJeu <b>{nomDuJoueur}</b> {leMessage}");
 
         if (gestionnaireMessagesJeu == null)
             gestionnaireMessagesJeu = JoueurReseau.Local.gestionnaireCameraLocale.GetComponentInChildren<GestionnaireMessagesJeu>();
@@ -33,7 +33,13 @@ public class MessagesJeuReseau : NetworkBehaviour
         {
             gestionnaireMessagesJeu.ReceptionMessage(leMessage);
         }
-        
+
+        if(leMessage == "a quitté la partie")
+        {
+            FindFirstObjectByType<GestionnaireAffichagePointage>().SupprimeJoueur(nomDuJoueur);
+        }
+
+
     }
 
     

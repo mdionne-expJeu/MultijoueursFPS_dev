@@ -20,12 +20,13 @@ public class GestionnairePointage : NetworkBehaviour
 
     public void EnregistrementNom(string leNom)
     {
+        print($"{gameObject.name} Enregistrement d'un joueur");
         gestionnaireAffichagePointage.EnregistrementNom(leNom);
     }
 
     public void ChangementPointage(string nomJoueur, byte valeur)
     {
-        
+        print($"{gameObject.name} Fonction changementPointage sur le serveur.");
         RPC_ChangementPointage(nomJoueur, valeur);
     }
 
@@ -33,14 +34,14 @@ public class GestionnairePointage : NetworkBehaviour
     void RPC_ChangementPointage(string nomJoueur, byte valeur, RpcInfo infos = default)
     {
         gestionnaireAffichagePointage.MiseAJourPointage(nomJoueur, valeur);
-        if (Object.HasStateAuthority)
+        /*if (Object.HasStateAuthority)
         {
             print($"{gameObject.name} Je recois le message comme serveur");
         }
         else
         {
             print($"{gameObject.name} Je recois le message comme client");
-        }
+        }*/
         
 
 

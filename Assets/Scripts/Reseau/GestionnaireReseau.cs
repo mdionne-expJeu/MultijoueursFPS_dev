@@ -23,6 +23,8 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
    // Pour compteur le nombre de joueurs connectés
     public int nbJoueurs = 0;
 
+    
+
     GestionnaireListeSessions gestionnaireListeSessions;
 
     
@@ -99,7 +101,10 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
             /*On change la variable maCouleur du nouveauJoueur et on augmente le nombre de joueurs connectés
             Comme j'ai seulement 10 couleurs de définies, je m'assure de ne pas dépasser la longueur de mon
             tableau*/
+
+       
             leNouveuJoueur.maCouleur = couleurJoueurs[nbJoueurs];
+
             nbJoueurs++;
             if (nbJoueurs >= 10) nbJoueurs = 0;
         }
@@ -114,7 +119,7 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
         //Debug.Log($"Le joueur {player.PlayerId} a quitté la partie");
-        
+       
     }
 
     /*

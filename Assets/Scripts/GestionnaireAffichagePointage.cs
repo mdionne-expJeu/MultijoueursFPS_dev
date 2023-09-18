@@ -31,6 +31,10 @@ public class GestionnaireAffichagePointage : MonoBehaviour
     void AffichePointage()
     {
         print($"Dictionnaire = {infosJoueursPointages.Count}");
+        foreach(var zonTexte in txt_InfoPointageJoueurs)
+        {
+            zonTexte.text = string.Empty;
+        }
         var i = 0;
         foreach (KeyValuePair<string, byte> itemDictio in infosJoueursPointages)
         {
@@ -38,7 +42,13 @@ public class GestionnaireAffichagePointage : MonoBehaviour
             i++;
         }
     }
-    // Update is called once per frame
+
+    public void SupprimeJoueur(string nomJoueur)
+    {
+        infosJoueursPointages.Remove(nomJoueur);
+        AffichePointage();
+    }
+
     void Update()
     {
         
