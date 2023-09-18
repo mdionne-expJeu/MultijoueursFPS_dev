@@ -92,7 +92,7 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
 
         if(_runner.IsServer)
         {
-            Debug.Log($"Création du joueur {player.PlayerId} par le serveur");
+            //Debug.Log($"Création du joueur {player.PlayerId} par le serveur");
             /*On garde la référence au nouveau joueur créé par le serveur. La variable locale
              créée est de type JoueurReseau (nom du script qui contient la fonction Spawned()*/
             JoueurReseau leNouveuJoueur =  _runner.Spawn(joueurPrefab, Utilitaires.GetPositionSpawnAleatoire(), Quaternion.identity, player);
@@ -105,7 +105,7 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
         }
         else
         {
-            Debug.Log("Un joueur s'est connecté comme client. Spawn d'un joueur");
+           // Debug.Log("Un joueur s'est connecté comme client. Spawn d'un joueur");
         }
     } 
 
@@ -113,7 +113,7 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-        Debug.Log($"Le joueur {player.PlayerId} a quitté la partie");
+        //Debug.Log($"Le joueur {player.PlayerId} a quitté la partie");
         
     }
 
@@ -153,28 +153,28 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
     {
         if(shutdownReason == ShutdownReason.GameIsFull)
         {
-            Debug.Log("Le maximum de joueur est atteint. Réessayer plus tard.");
+            //Debug.Log("Le maximum de joueur est atteint. Réessayer plus tard.");
         }
     }
 
     public void OnConnectedToServer(NetworkRunner runner)
     {
-        Debug.Log("OnConnectedToServer");
+        //Debug.Log("OnConnectedToServer");
     }
 
     public void OnDisconnectedFromServer(NetworkRunner runner)
     {
-        Debug.Log("OnOnDisconnectedFromServer");
+       // Debug.Log("OnOnDisconnectedFromServer");
     }
 
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
     {
-        Debug.Log("Connection demandée par = " + runner.GetPlayerUserId());
+        //Debug.Log("Connection demandée par = " + runner.GetPlayerUserId());
     }
 
     public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
     {
-        Debug.Log("Connection refusée par = " + runner.GetPlayerUserId());
+        //Debug.Log("Connection refusée par = " + runner.GetPlayerUserId());
     }
 
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
@@ -189,7 +189,7 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
 
         if(sessionList.Count == 0)
         {
-            Debug.Log("Lobby rejoint. Aucune session active");
+           // Debug.Log("Lobby rejoint. Aucune session active");
             gestionnaireListeSessions.AucuneSessionTrouvee();
         }
         else
@@ -199,7 +199,7 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
             foreach(SessionInfo sessionInfo in sessionList)
             {
                 gestionnaireListeSessions.AjouteListe(sessionInfo);
-                Debug.Log($"Session {sessionInfo.Name} trouvée. Nombre de joueurs = {sessionInfo.PlayerCount}");
+                //Debug.Log($"Session {sessionInfo.Name} trouvée. Nombre de joueurs = {sessionInfo.PlayerCount}");
             }
         }
     }
@@ -236,18 +236,18 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
 
     private async Task ConnextionAuLobby()
     {
-        Debug.Log("Connexion au lobby démarée");
+//        Debug.Log("Connexion au lobby démarée");
         string nomDuLobby = "NomDuLobby";
 
         StartGameResult resultat = await _runner.JoinSessionLobby(SessionLobby.Custom, nomDuLobby);
 
         if(resultat.Ok)
         {
-            Debug.Log("Connexion au lobby effectuée avec succès");
+            //Debug.Log("Connexion au lobby effectuée avec succès");
         }
         else
         {
-            Debug.LogError($"Incapable de se connecter au lobby {nomDuLobby}");
+            //Debug.LogError($"Incapable de se connecter au lobby {nomDuLobby}");
         }
     }
 
@@ -261,7 +261,7 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
 
     public void RejoindrePartie(SessionInfo sessionInfo)
     {
-        Debug.Log($"Rejoindre session {sessionInfo.Name}");
+       // Debug.Log($"Rejoindre session {sessionInfo.Name}");
         int indexScene = SceneManager.GetActiveScene().buildIndex;
         CreationPartie(GameMode.Client, sessionInfo.Name, indexScene);
     }

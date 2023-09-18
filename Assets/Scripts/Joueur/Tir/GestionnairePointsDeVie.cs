@@ -91,11 +91,11 @@ public class GestionnairePointsDeVie : NetworkBehaviour
      * Important : souvenez-vous que les variables ptsVie et estMort sont de type [Networked] et qu'une 
      * fonction sera automatiquement appelée lorsque leur valeur change.
     */
-    public void PersoEstTouche(string dommageFaitParQui, byte dommage)
+    public bool PersoEstTouche(string dommageFaitParQui, byte dommage)
     {
         //1.
         if (estMort)
-            return;
+            return false;
         //2.
         if (dommage > ptsVie)
             dommage = ptsVie;
@@ -110,7 +110,10 @@ public class GestionnairePointsDeVie : NetworkBehaviour
             messagesJeuReseau.EnvoieMessageJeuRPC(dommageFaitParQui, $" a éliminé <b>{joueurReseau.nomDujoueur}</b>");
             StartCoroutine(RessurectionServeur_CO());
             estMort = true;
+            
+            return true;
         }
+        return false;
     }
 
     /* Enumarator qui attend 2 secondes et qui appelle ensuite la fonction DemandeRespawn

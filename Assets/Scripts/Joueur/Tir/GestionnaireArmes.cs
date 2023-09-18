@@ -127,7 +127,8 @@ public class GestionnaireArmes : NetworkBehaviour
     */
     void TirLocal(Vector3 vecteurDevant)
     {
-        Debug.Log("tir local debut");
+        bool ilEstMort =false;
+        //Debug.Log("tir local debut");
         //1.
         if (Time.time - tempsDernierTir < delaiTirLocal) return;
         
@@ -140,11 +141,12 @@ public class GestionnaireArmes : NetworkBehaviour
         //4.
         bool toucheAutreJoueur = false;
         float distanceJoueurTouche = infosCollisions.Distance;
+
         
         //5.
         if (infosCollisions.Hitbox != null)
         {
-            Debug.Log("tir local hitboxtouché");
+            //Debug.Log("tir local hitboxtouché");
             //Debug.Log($"{Time.time} {transform.name} a touché le joueur {infosCollisions.Hitbox.transform.root.name}");
             toucheAutreJoueur = true;
 
@@ -152,15 +154,17 @@ public class GestionnaireArmes : NetworkBehaviour
             // On appelle la fonction PersoEstTouche du joueur touché dans le script GestionnairePointsDeVie
             if (Object.HasStateAuthority) 
             {
-                Debug.Log("tir appel fonction persotouche()");
-                infosCollisions.Hitbox.transform.root.GetComponent<GestionnairePointsDeVie>().PersoEstTouche(joueurReseau.nomDujoueur.ToString(),1);
+                //Debug.Log("tir appel fonction persotouche()");
+                ilEstMort = infosCollisions.Hitbox.transform.root.GetComponent<GestionnairePointsDeVie>().PersoEstTouche(joueurReseau.nomDujoueur.ToString(),1);
+               
+                    
             }
             
         }
         else if (infosCollisions.Collider != null)
         {
  
-            Debug.Log($"{Time.time} {transform.name} a touché l'objet {infosCollisions.Collider.transform.root.name}");
+            //Debug.Log($"{Time.time} {transform.name} a touché l'objet {infosCollisions.Collider.transform.root.name}");
         }
 
         //6. 
@@ -174,6 +178,12 @@ public class GestionnaireArmes : NetworkBehaviour
         }
         //7.
         tempsDernierTir = Time.time;
+
+        if(ilEstMort)
+        {
+            GetComponent<GestionnairePointage>().ChangementPointage(joueurReseau.nomDujoueur.ToString(), 1);
+        }
+            
     }
 
     /* Coroutine qui déclenche le système de particules localement et qui gère la variable bool ilTir en l'activant
@@ -205,7 +215,7 @@ public class GestionnaireArmes : NetworkBehaviour
      */
     static void OnTir(Changed<GestionnaireArmes> changed) //static. On doit appeler une fonction non static
     {
-        Debug.Log($"{Time.time} Valeur OnTir() = {changed.Behaviour.ilTir}");
+        //Debug.Log($"{Time.time} Valeur OnTir() = {changed.Behaviour.ilTir}");
 
         //Dans fonction static, on ne peut pas changer ilTir = true. Utiliser changed.Behaviour.ilTir
         //1.

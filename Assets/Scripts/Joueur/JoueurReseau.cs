@@ -133,6 +133,7 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
         print("instance changement de nom");
         Debug.Log($"Le nom du joueur {gameObject.name} est changé pour {nomDujoueur}");
         nomDuJoueurTxt.text = nomDujoueur.ToString();
+        GetComponent<GestionnairePointage>().EnregistrementNom(nomDujoueur);
     }
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
