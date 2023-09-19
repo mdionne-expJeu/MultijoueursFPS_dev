@@ -36,7 +36,11 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
         gestionnaireListeSessions = FindFirstObjectByType<GestionnaireListeSessions>(FindObjectsInactive.Include); //true pour les objets inactifs
 
         if (RunnerDejaActif != null)
+        {
             _runner = RunnerDejaActif;
+            Destroy(gameObject);
+        }
+           
     }
 
     void Start()
