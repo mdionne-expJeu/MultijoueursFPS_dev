@@ -20,10 +20,8 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
 
    // Tableau de couleurs à difinir dans l'inspecteur
     public Color[] couleurJoueurs;
-   // Pour compteur le nombre de joueurs connectés
+   // Pour compter le nombre de joueurs connectés
     public int nbJoueurs = 0;
-
-    
 
     GestionnaireListeSessions gestionnaireListeSessions;
 
@@ -61,34 +59,40 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
            // CreationPartie(GameMode.AutoHostOrClient, "TestSession",1);
             
         }
-            
+
     }
 
-    // Fonction asynchrone pour démarrer Fusion et créer une partie 
+    /* Fonction asynchrone pour démarrer Fusion et créer une partie. Est appelé par le script
+     * 
+     * Paramètres reçus : 
+     * - GameMode : Valeur possible : Client, Host, Server, AutoHostOrClient, etc.)
+     * - nomSession : Nom de la partie (session) 
+     * - indexScene : l'index de la scène de jeu
+     * 1. Méthode du NetworkRunner qui permet d'initialiser une nouvelle partie (session)
+     * 2. On utilise les paramètres pour définir les différente arguments (GameMode, SessionName, scene)
+     * 3. Le nom du Lobby. Pourrait être passé en paramètre éventuellement
+     * 4. On limite le nombre de joueur connecté à 10
+     * 5.SceneManager : référence au component script NetworkSceneManagerDefault qui 
+     * est ajouté au même moment
+     */
     async void CreationPartie(GameMode mode, string nomSession, int indexScene)
     {
-
-
-        /*Méthode du NetworkRunner qui permet d'initialiser une partie
-         * GameMode : reçu en argument. Valeur possible : Client, Host, Server, AutoHostOrClient, etc.)
-         * SessionName : Nom de la chambre (room) pour cette partie
-         * Scene : la scène qui doit être utilisée pour la simulation
-         * SceneManager : référence au component script NetworkSceneManagerDefault qui est ajouté au même moment
-         */
+        //1.
         await _runner.StartGame(new StartGameArgs()
         {
+            //2.
             GameMode = mode,
             SessionName = nomSession,
-            CustomLobbyName = "IdDuLobby",
+            //3.
+            CustomLobbyName = "MonFPS_Lobby",
             Scene = indexScene,
+            //4.
             PlayerCount = 10, //limite de 10 joueurs
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         }); ;
     }
 
-    
-
-
+   
     /* Lorsqu'un joueur se connecte au serveur
      * 1.On vérifie si ce joueur est aussi le serveur. Si c'est le cas, on spawn un prefab de joueur.
      * Bonne pratique : la commande Spawn() devrait être utilisé seulement par le serveur
@@ -191,16 +195,34 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
        
     }
 
+    /* Fonction de PhotonFusion qui est automatiquement appelée lorsqu'on rejoint un lobby et lorsqu'une
+     * nouvelle partie (session) est créée.
+     * Paramètres :
+     * - Runner : référence au client serveur
+     * - List<SessionInfo> sessionList : une liste contenant la liste des parties (sessions)
+     * 1. Par mesure préventive. On quitte la fonction si la référence au script gestionnaireListeSessions
+     * n'a pas été défini.
+     * 2.Si la liste est vide, on appelle la fonction AucuneSessionTrouvee() du script 
+     * gestionnaireListeSessions;
+     * 3.Si des parties (sessions) sont en cours, on efface les anciennes informations du tableau des
+     * listes de session en appelant EffaceListe() du script gestionnaireListeSessions. Ensuite, le
+     * foreach s'exécutera. Il permet de passer les éléments de la liste "sessionList" un par un. Pour
+     * chaque itération, on appelle la fonction AjouteListe du script gestionnaireListeSessions en lui 
+     * passant en paramètre l'élément de la liste qui contient les informations sur une partie (session).
+     * Le script gestionnaireListeSessions créera alors un nouvel élément dans le PanelListeSessions qui
+     * présente les informations de la partie (nom, nombre de joueurs connectés).
+     */
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
     {
+        //1.
         if (gestionnaireListeSessions == null)
             return;
-
+        //2.
         if(sessionList.Count == 0)
         {
-           // Debug.Log("Lobby rejoint. Aucune session active");
             gestionnaireListeSessions.AucuneSessionTrouvee();
         }
+        //3.
         else
         {
             gestionnaireListeSessions.EffaceListe();
@@ -208,7 +230,6 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
             foreach(SessionInfo sessionInfo in sessionList)
             {
                 gestionnaireListeSessions.AjouteListe(sessionInfo);
-                //Debug.Log($"Session {sessionInfo.Name} trouvée. Nombre de joueurs = {sessionInfo.PlayerCount}");
             }
         }
     }
@@ -238,18 +259,37 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
        
     }
 
+    /*
+     * Fonction publique qui est appelée par le script GestionnaireMenuAccueil lorsque l'utilisateur
+     * clique sur le bouton "Trouver une partie".
+     * Création d'une task. Un obet task permet des opérations asynchrone (qui prennent un certain temps)
+     * comme les opérations réseau. Le thred principal (autre code) continue de s'exécuter.
+     * Appel de la méthode asynchrone ConnexionAuLobby qui renverra une task récupérée par la variable
+     * tacheConnexionLobby.
+     */
     public void RejoindreLeLobby()
     {
-        Task tacheConnexionLobby = ConnextionAuLobby();
+        Task tacheConnexionLobby = ConnexionAuLobby();
     }
-
-    private async Task ConnextionAuLobby()
+    /*
+    * Fontion asynchrone qui appelle la fonction Fusion pour se joindre à un lobby
+    * 1.Le nom du lobby à rejoindre. Il faut utiliser le même lorsqu'on crée le lobby!
+    * 2.Appel de la fonction Fusion JoinSessionLobby en indiquant le nom de la session à joindre comme
+    * deuxième paramètre. Le mot clé "await" permet de suspensder l'exécution du code tant que la
+    * réponse n'est pas reçue. Le résultat sera enmagasiné dans la variable "resultat" qui est de type
+    * StartGameResult (une classe propre a Fusion)
+    * 3.Vérifiation de l'état de l'opération (réussie ou pas)
+    * Notez que lorsque l'opération "JoinSessionLobby" est réussie, la fonction "OnSessionListUpdated"
+    * sera automatiquement exécutée.
+    * Notez que si le lobby n'existe pas, il sera créé.Si le lobby existe, le joueur s'y joindra
+    */
+    private async Task ConnexionAuLobby()
     {
-//        Debug.Log("Connexion au lobby démarée");
-        string nomDuLobby = "NomDuLobby";
-
+        //1.
+        string nomDuLobby = "MonFPS_Lobby";
+        //2.
         StartGameResult resultat = await _runner.JoinSessionLobby(SessionLobby.Custom, nomDuLobby);
-
+        //3.
         if(resultat.Ok)
         {
             //Debug.Log("Connexion au lobby effectuée avec succès");
@@ -260,26 +300,25 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
         }
     }
 
-    public void CreationPartie(string nomSession, string nomScene)
+    public void InfosCreationPartie(string nomSession, string nomScene)
     {
         int indexScene = SceneUtility.GetBuildIndexByScenePath($"Scenes/{nomScene}");
-        Debug.Log($"Création de la session {nomSession} scène {nomScene} build index {indexScene}");
-
         CreationPartie(GameMode.Host, nomSession, indexScene);
     }
 
+    /* Fonction appelée de l'extérieur par le script GestionnaireListeSession et lorsque le joueur
+     * appuie sur le bouton pour rejoindre une partie.
+     * Paramètre :
+     * - SessionInfo sessionInfo : Les informations sur la partie à rejoindre
+     * 1.Appel de la fonction CreationPartie. Dans ce cas, on va plutôt rejoindre une partie
+     * existante. On précise donc en paramètres que nous serons Client (et non serveur), le nom de la
+     * partie (sesion) à rejoindre. Le dernière paramètre représente l'index de la scène. Sa valeur n'a
+     * pas d'importance et sera géré par Fusion pour nous diriger à la bonne scène.
+     */
     public void RejoindrePartie(SessionInfo sessionInfo)
     {
-       // Debug.Log($"Rejoindre session {sessionInfo.Name}");
-        int indexScene = SceneManager.GetActiveScene().buildIndex;
-        CreationPartie(GameMode.Client, sessionInfo.Name, indexScene);
+        CreationPartie(GameMode.Client, sessionInfo.Name, 0);
     }
 
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Backspace))
-        {
-            Debug.ClearDeveloperConsole();
-        }
-    }
+    
 }

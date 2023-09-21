@@ -583,6 +583,26 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5340990264492836365, guid: e5dcd3a894cef42009a0c898d73ebe44, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6100117490789118031, guid: e5dcd3a894cef42009a0c898d73ebe44, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6100117490789118031, guid: e5dcd3a894cef42009a0c898d73ebe44, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6100117490789118031, guid: e5dcd3a894cef42009a0c898d73ebe44, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 890
+      objectReference: {fileID: 0}
+    - target: {fileID: 6100117490789118031, guid: e5dcd3a894cef42009a0c898d73ebe44, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -55
+      objectReference: {fileID: 0}
     - target: {fileID: 6609539761448086833, guid: e5dcd3a894cef42009a0c898d73ebe44, type: 3}
       propertyPath: m_Name
       value: CanvasComplet

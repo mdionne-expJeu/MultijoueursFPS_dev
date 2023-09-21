@@ -98,7 +98,7 @@ public class GestionnaireMenuAccueil : MonoBehaviour
     {
         //1.
         GestionnaireReseau gestionnaireReseau = FindFirstObjectByType<GestionnaireReseau>();
-        gestionnaireReseau.CreationPartie(inputField_NomSession.text, "Jeu");
+        gestionnaireReseau.InfosCreationPartie(inputField_NomSession.text, "Jeu");
         //2.
         CacheTousLesPanels();
         panelEtat.SetActive(true);
