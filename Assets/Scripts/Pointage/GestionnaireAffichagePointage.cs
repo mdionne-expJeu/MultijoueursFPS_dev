@@ -12,25 +12,20 @@ public class GestionnaireAffichagePointage : MonoBehaviour
 
     public TextMeshProUGUI[] txt_InfoPointageJoueurs;
 
-    public void EnregistrementNom(string leNom)
+    public void EnregistrementNom(string leNom, byte pointage)
     {
-       // print($"enregistrement nom {gameObject.name}");
-        //infoPointage.Add(leNom, 0);
-        
-        infosJoueursPointages.Add(leNom.ToString(), 0);
+        infosJoueursPointages.Add(leNom.ToString(), pointage);
         AffichePointage();
-        //print($"le dictionnaire static contient {infosJoueursPointages.Count} valeurs");
     }
 
     public void MiseAJourPointage(string nomJoueur, byte valeur)
     {
-        infosJoueursPointages[nomJoueur] += valeur;
+        infosJoueursPointages[nomJoueur] = valeur;
         AffichePointage();
     }
 
     void AffichePointage()
     {
-        print($"Dictionnaire = {infosJoueursPointages.Count}");
         foreach(var zonTexte in txt_InfoPointageJoueurs)
         {
             zonTexte.text = string.Empty;

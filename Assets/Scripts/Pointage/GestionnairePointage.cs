@@ -7,8 +7,8 @@ using Fusion;
 
 public class GestionnairePointage : NetworkBehaviour
 {
-
-    byte pointage;
+    [Networked]
+    byte pointage { get; set; }
 
     GestionnaireAffichagePointage gestionnaireAffichagePointage;
 
@@ -20,14 +20,13 @@ public class GestionnairePointage : NetworkBehaviour
 
     public void EnregistrementNom(string leNom)
     {
-        print($"{gameObject.name} Enregistrement d'un joueur");
-        gestionnaireAffichagePointage.EnregistrementNom(leNom);
+        gestionnaireAffichagePointage.EnregistrementNom(leNom,pointage);
     }
 
     public void ChangementPointage(string nomJoueur, byte valeur)
     {
-        print($"{gameObject.name} Fonction changementPointage sur le serveur.");
-        RPC_ChangementPointage(nomJoueur, valeur);
+        pointage += valeur;
+        RPC_ChangementPointage(nomJoueur, pointage);
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
