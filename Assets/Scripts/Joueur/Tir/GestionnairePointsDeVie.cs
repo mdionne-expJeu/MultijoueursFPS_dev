@@ -110,6 +110,8 @@ public class GestionnairePointsDeVie : NetworkBehaviour
             messagesJeuReseau.EnvoieMessageJeuRPC(dommageFaitParQui.nomDujoueur.ToString(), $" a éliminé <b>{joueurReseau.nomDujoueur}</b>");
             StartCoroutine(RessurectionServeur_CO());
             estMort = true;
+            /*Mise à jour du pointage du joueur qui a causé la mort en appelant la fonction
+             * ChangementPointage() de ce joueur */
             dommageFaitParQui.GetComponent<GestionnairePointage>().ChangementPointage(dommageFaitParQui.nomDujoueur.ToString(), 1);
         }
         
@@ -118,7 +120,7 @@ public class GestionnairePointsDeVie : NetworkBehaviour
     /* Enumarator qui attend 2 secondes et qui appelle ensuite la fonction DemandeRespawn
      * du script gestionnaireMouvementPersonnage.
     */
-    IEnumerator RessurectionServeur_CO()
+            IEnumerator RessurectionServeur_CO()
     {
         yield return new WaitForSeconds(2);
         gestionnaireMouvementPersonnage.DemandeRespawn();

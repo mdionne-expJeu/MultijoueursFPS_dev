@@ -17,9 +17,14 @@ using TMPro;
  */
 public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
 {
-    public TextMeshProUGUI nomDuJoueurTxt;
+    /* Remplacer votre ancienne variable nomDujoueur par ceci.
+     * Ajout d'une variable synchronisée (Networked) de type NetworkString avec un maximum de
+     * 16 caractères. Lorsque la variable est modifiée, appel de la fonction ChangementDeNom_static()
+     */
     [Networked(OnChanged = nameof(ChangementDeNom_static))]
     public NetworkString<_16> nomDujoueur { get; set; }
+
+    public TextMeshProUGUI nomDuJoueurTxt;
 
     //Variable qui sera automatiquement synchronisée par le serveur sur tous les clients
     [Networked] public Color maCouleur { get; set; }
@@ -52,21 +57,7 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
         GetComponentInChildren<MeshRenderer>().material.color = maCouleur;
     }
 
-    /*public override void FixedUpdateNetwork()
-    {
-        if(Object.HasStateAuthority)
-        {
-            Debug.Log($"FUN du StateAuthority pour le joueur {Object.Id}");
-        }
-        if (Object.HasInputAuthority)
-        {
-            Debug.Log($"FUN du InputAuthority pour le joueur {Object.Id}");
-        }
-        if(!Object.HasInputAuthority && !Object.HasStateAuthority)
-        {
-            Debug.Log($"FUN de AucuneAutorité pour le joueur {Object.Id}");
-        }
-    }*/
+    
 
     public override void Spawned() //3.
     {
@@ -79,8 +70,7 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
 
             //On désactive la mainCamera. Assurez-vous que la caméra de départ possède bien le tag MainCamera
             Camera.main.gameObject.SetActive(false);
-
-            Debug.Log("Un joueur local a été créé");
+            //Apple d'un RPC (fonction remote procedure call) en passant le nom du joueur enregistré
             RPC_ChangementdeNom(PlayerPrefs.GetString("NomDuJoueur"));
            
            
@@ -108,6 +98,18 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
 
     public void PlayerLeft(PlayerRef player) //.4
     {
+        /* À partir du paramètre "player" reçu en paramètre, on récupére le NetworkObject qui lui est
+         * associé. On peut ainsi aller chercher la variable "nomDujoueur" dans son script JoueurReseau.
+         * Une fois cela fait, on appelle la fonction SupprimeJoueur() du script 
+         * GestionnairePointage en lui passant le nom du joueur qui quitte.
+         */
+        
+        if (Runner.TryGetPlayerObject(player, out NetworkObject leJoueurQuiPart))
+        {
+            string nomJoueurQuiPart = leJoueurQuiPart.GetBehaviour<JoueurReseau>().nomDujoueur.ToString();
+            FindFirstObjectByType<GestionnairePointage>().SupprimeJoueur(nomJoueurQuiPart);
+        }
+
         if (Object.HasStateAuthority)
         {
             if(Runner.TryGetPlayerObject(player, out NetworkObject leJoueurQuiQuitte))
@@ -124,26 +126,45 @@ public class JoueurReseau : NetworkBehaviour, IPlayerLeft //1.
         }
     }
 
+    /* Fonction static qui sera appelée automatiquement lors la variable nomDuJoueur sera changé. 
+     * Sera appelé sur tous les clients puisque la variable nomDuJoueur est synchronisée (Networked)
+     * 1.Appel de la fonction instanciée ChangementDeNom()
+     */
     static void ChangementDeNom_static(Changed<JoueurReseau> changed)
     {
-        print("static changement de nom");
+        //1.
         changed.Behaviour.ChangementDeNom();
     }
 
+    /* Fonction changement de nom qui appelle la fonction EnregistrementNom() du script
+     * GestionnairePointage en passant le nom du joueur en paramètre.
+     * 
+     */
     private void ChangementDeNom()
     {
-        print("instance changement de nom");
-        Debug.Log($"Le nom du joueur {gameObject.name} est changé pour {nomDujoueur}");
         nomDuJoueurTxt.text = nomDujoueur.ToString();
         GetComponent<GestionnairePointage>().EnregistrementNom(nomDujoueur.ToString());
     }
 
+    /* Déclenchement d'un remote procedure call (RPC). Ceci permet à un joueur (clien) de déclencher
+     * une fonction sur un autre client. Entre paranthèses, on peut spécifier la source et la cible. Si
+     * on ne le fait pas, il s'agit alors d'un RPC static qui sera envoyé à tous les clients.
+     * Ici, le message est envoyé par le joueur qui possède le InputAuthority, c'est-à-dire le joueur
+     * local qui vient d'entrer son nom. Le message est destiné uniquement au serveur (StateAuthority).
+     * Concrètement, ce script sera exécuté seulement sur le serveur, dans le script du joueur qui
+     * vient de se joindre.
+     * - Paramètres :
+     * - string leNom : le nom du joueur reçu en paramètre
+     * - RpcInfo infos = propre à Fusion. Contientra différentes informations pouvant être utilisées,
+     * telles : le tick précis de l'envoie, la source (playerRef) qui  a envoyé le message, etc.)
+     * 1. On défini le nom du joueur. Seulement sur le serveur, mais cette variable est Networked et
+     * sera synchronisée.
+     */
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
     public void RPC_ChangementdeNom(string leNom, RpcInfo infos = default)
     {
-        //éxécuté sur serveur uniquement
+        print("RPC_ChangementdeNom");
         this.nomDujoueur = leNom;
-        Debug.Log("RPC_ChangementdeNom");
         if(!messageEnvoieDuNom)
         {
             

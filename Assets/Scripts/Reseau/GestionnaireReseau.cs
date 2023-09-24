@@ -300,9 +300,24 @@ public class GestionnaireReseau : MonoBehaviour, INetworkRunnerCallbacks
         }
     }
 
+    /*
+     * Fonction appelé de l'extérieur par le script GestionnaireMenuAccueil lors que le joueur a appuyé
+     * sur le bouton pour créer une nouvelle partie (session).
+     * Paramètres :
+     * string nomSession : le nom de la partie (session) qui sera créée
+     * string nomScene : le nom de la scène dans lequel on devra être dirigé une fois la partie créé.
+     * Dans ce projet, il s'agit de la scène "Jeu".
+     * 1.Récupérartion du build index de la scène "Jeu". Notez l'utilisation de la commande 
+     * SceneUtility.GetBuildIndexByScenePath()
+     * 2.Appel de la fonction CreationPartie pour créer une nouvelle partie (session). On précise en 
+     * paramètres que nous serons l'hôte de la partie et non un client. On indique également le nom
+     * de la partie (session) et l'index de la scène qui doit être chargée.
+     */
     public void InfosCreationPartie(string nomSession, string nomScene)
     {
+        //1.
         int indexScene = SceneUtility.GetBuildIndexByScenePath($"Scenes/{nomScene}");
+        //2.
         CreationPartie(GameMode.Host, nomSession, indexScene);
     }
 

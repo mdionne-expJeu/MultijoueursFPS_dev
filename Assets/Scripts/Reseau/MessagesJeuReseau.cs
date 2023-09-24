@@ -36,7 +36,7 @@ public class MessagesJeuReseau : NetworkBehaviour
 
         if(leMessage == "a quitté la partie")
         {
-            FindFirstObjectByType<GestionnaireAffichagePointage>().SupprimeJoueur(nomDuJoueur);
+            //FindFirstObjectByType<GestionnaireAffichagePointage>().SupprimeJoueur(nomDuJoueur);
         }
 
 
