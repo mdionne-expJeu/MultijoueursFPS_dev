@@ -7,7 +7,7 @@ using Fusion;
  * - GameObject prefabExplosion : Le prefab avec particules qui sera utilisé pour l'explosion. À définir dans l'inspecteur.
  * - LayerMask layersCollision : Détermine le layer qui sera sensible à la détection de collision
  * - PlayerRef lanceur: Référence au joueur qui a lancé la grenade
- * - string nomLanceur: Le nom du joueur qui lance la grenade
+ * - JoueurReseau joueurReseauLanceur: Reference au script JoueurReseau du joueur qui a lancé la grenade
  * - TickTimer timerExplosion : Timer propre a fusion. Désactivé au départ. Permettra de créer une temporisation pour éviter
  * qu'on puisse tirer des grenades trop rapidement.
  * - List<LagCompensatedHit> infosCollisionsList: Liste qui contiendra les objets touchés lors de l'explosion de la grenade
@@ -32,17 +32,18 @@ public class GestionnaireGrenade : NetworkBehaviour
     NetworkRigidbody networkRigidbody;
 
     /*
-   * Fonction appeler par le script GestionnaireArmes. Elle gère la grenade tout juste après son spawning
-   * Paramètres :
-   * - Vector3 forceDuLance : la force (et la direction) qui doit être appliquée à la grenade
-   * - PlayerRef lanceur : le joueur qui lance la grenade
-   * - string nomLanceur : le nom du joueur qui lance la grenade
-   * 1. On mémorise la référence aux components NetworkObject et NetworkRigidbody
-   * 2. On applique une force "impulse" à la grenade. La valeur de la force appliquée est reçu en paramètre (force du lancer)
-   * 3. On mémorise dans des variables : le joueur qui lance la grenade ainsi que son nom. Notez l'utilisation du "this"
-   * qui permet de distinguer la variable du paramètre de la fonction qui porte le même nom.
-   * 4.Création d'un timer réseau (TickTimer) d'une durée de 2 secondes
-   */
+     * Fonction appeler par le script GestionnaireArmes. Elle gère la grenade tout juste après son spawning
+     * Paramètres :
+     * - Vector3 forceDuLance : la force (et la direction) qui doit être appliquée à la grenade
+     * - PlayerRef lanceur : le joueur qui lance la grenade
+     * - JoueurReseau joueurReseauLanceur : référence au script JoueurReseau du lanceur de grenade
+     * 1. On mémorise la référence aux components NetworkObject et NetworkRigidbody
+     * 2. On applique une force "impulse" à la grenade. La valeur de la force appliquée est reçu en paramètre (force du lancer)
+     * 3. On mémorise dans des variables : le joueur qui lance la grenade ainsi que son script JoueurReseau. Notez l'utilisation 
+     * du "this" qui permet de distinguer la variable du paramètre de la fonction qui porte le même nom.
+     * 4.Création d'un timer réseau (TickTimer) d'une durée de 2 secondes
+     */
+
     public void LanceGrenade(Vector3 forceDuLance, PlayerRef lanceur, JoueurReseau joueurReseauLanceur)
     {
         //1.
